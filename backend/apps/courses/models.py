@@ -7,9 +7,7 @@ from django.utils import timezone
 import uuid
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-# ----------------------------
-# Category
-# ----------------------------
+
 class Category(models.Model):
     name = models.CharField(max_length=150, unique=True)
     slug = models.SlugField(unique=True, blank=True)
@@ -38,9 +36,7 @@ class Category(models.Model):
         return self.name
 
 
-# ----------------------------
-# Course
-# ----------------------------
+
 class Course(models.Model):
 
     STATUS_CHOICES = (
@@ -133,9 +129,7 @@ class Course(models.Model):
         return self.title
 
 
-# ----------------------------
-# Module (Section)
-# ----------------------------
+
 class Module(models.Model):
 
     course = models.ForeignKey(
@@ -156,9 +150,6 @@ class Module(models.Model):
         return f"{self.course.title} - {self.title}"
 
 
-# ----------------------------
-# Lesson
-# ----------------------------
 class Lesson(models.Model):
 
     CONTENT_TYPES = (
@@ -227,9 +218,6 @@ class Lesson(models.Model):
             raise ValidationError("File required.")
 
 
-# ----------------------------
-# Enrollment
-# ----------------------------
 class Enrollment(models.Model):
 
     PAYMENT_STATUS = (
