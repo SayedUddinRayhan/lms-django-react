@@ -2,13 +2,17 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class User(AbstractUser):
+    STUDENT = "student"
+    INSTRUCTOR = "instructor"
+    ADMIN = "admin"
+
     ROLE_CHOICES = (
-        ("admin", "Admin"),
-        ("student", "Student"),
-        ("instructor", "Instructor"),
+        (STUDENT, "Student"),
+        (INSTRUCTOR, "Instructor"),
+        (ADMIN, "Admin"),
     )
 
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="student")
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=STUDENT)
     phone = models.CharField(max_length=20, unique=True, null=True, blank=True)
 
     class Meta:
@@ -20,12 +24,12 @@ class User(AbstractUser):
     # Convenience properties
     @property
     def is_admin_role(self):
-        return self.role == "admin"
+        return self.role == self.ADMIN
 
     @property
     def is_student_role(self):
-        return self.role == "student"
+        return self.role == self.STUDENT
 
     @property
     def is_instructor_role(self):
-        return self.role == "instructor"
+        return self.role == self.INSTRUCTOR
