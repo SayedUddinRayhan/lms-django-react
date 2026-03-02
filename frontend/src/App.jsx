@@ -1,6 +1,8 @@
 // src/App.jsx
 import { Routes, Route } from "react-router-dom";
-import Layout from "./layouts/Layout";
+import PublicLayout from "./layouts/PublicLayout";
+import AuthLayout from "./layouts/AuthLayout";
+import DashboardLayout from "./layouts/DashboardLayout";
 
 // Public Pages
 import Home from "./pages/public/Home";
@@ -15,37 +17,22 @@ import PrivateRoute from "./auth/PrivateRoute";
 function App() {
   return (
     <Routes>
-      {/* Public Routes with Layout */}
-      <Route
-        path="/"
-        element={
-          <Layout>
-            <Home />
-          </Layout>
-        }
-      />
-      <Route
-        path="/courses/:id"
-        element={
-          <Layout>
-            <CourseDetails />
-          </Layout>
-        }
-      />
+     {/* Public Pages */}
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/courses/:id" element={<CourseDetails />} />
+      </Route>
 
-      {/* Auth Pages (No Navbar/Footer if you want, can wrap in another layout) */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      {/* Auth Pages */}
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Route>
 
-      {/* Protected Route */}
-      <Route
-        path="/dashboard"
-        element={
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        }
-      />
+      {/* Dashboard */}
+      <Route element={<PrivateRoute><DashboardLayout /></PrivateRoute>}>
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Route>
 
       {/* 404 */}
       <Route

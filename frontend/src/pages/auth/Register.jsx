@@ -35,65 +35,63 @@ const Register = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white shadow-xl rounded-2xl p-10 w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center text-indigo-600">
-          Create Account
-        </h2>
+ return (
+  <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 dark:bg-gray-800">
+      <h2 className="text-3xl font-bold text-center mb-6">
+        Create Account
+      </h2>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            onChange={handleChange}
-            className="w-full border px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
-            required
-          />
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="text"
+          name="name"
+          placeholder="Full Name"
+          onChange={handleChange}
+          className="w-full border border-gray-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          required
+        />
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email Address"
-            onChange={handleChange}
-            className="w-full border px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
-            required
-          />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email Address"
+          onChange={handleChange}
+          className="w-full border border-gray-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          required
+        />
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={handleChange}
-            className="w-full border px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
-            required
-          />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          onChange={handleChange}
+          className="w-full border border-gray-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          required
+        />
 
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            onChange={handleChange}
-            className="w-full border px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
-            required
-          />
+        <input
+          type="password"
+          name="confirmPassword"
+          placeholder="Confirm Password"
+          onChange={handleChange}
+          className="w-full border border-gray-300 px-4 py-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          required
+        />
 
-          <button
-            disabled={loading}
-            className="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition"
-          >
-            {loading ? "Creating Account..." : "Register"}
-          </button>
-        </form>
+        <button
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+        >
+          {loading ? "Creating Account..." : "Register"}
+        </button>
+      </form>
 
-        <p className="text-center mt-6 text-gray-600">
-          Already have an account?{" "}
-          <Link to="/login" className="text-indigo-600 font-semibold">
-            Login
-          </Link>
-        </p>
-      </div>
+      <p className="text-center mt-6 text-gray-600 dark:text-gray-400">
+        Already have an account?{" "}
+        <Link to="/login" className="text-blue-600 font-semibold">
+          Login
+        </Link>
+      </p>
     </div>
   );
 };
