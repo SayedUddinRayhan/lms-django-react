@@ -38,16 +38,19 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     setAuthError(null);
     setIsAuthLoading(true);
+  
     try {
       const user = await authService.login(credentials);
       setUser(user);
-      // Redirect based on role
+  
       const roleRedirect = {
         student: "/student/dashboard",
         instructor: "/instructor/dashboard",
       };
-      navigate(roleRedirect[response.user.role] || "/");
-      return response;
+  
+      navigate(roleRedirect[user.role] || "/");
+      return user;
+  
     } catch (err) {
       setAuthError(err.message || "Login failed");
       throw err;

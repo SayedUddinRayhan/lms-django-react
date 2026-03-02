@@ -1,8 +1,8 @@
-import API from "../api/axios";
+import API from "../api/apiClient";
 
 export const authService = {
   login: async ({ username, password }) => {
-    const res = await API.post("/auth/login/", { username, password });
+    const res = await API.post("auth/login/", { username, password });
     const { access, refresh, user } = res.data;
     localStorage.setItem("access", access);
     localStorage.setItem("refresh", refresh);
@@ -11,12 +11,12 @@ export const authService = {
   },
 
   register: async (userData) => {
-    const res = await API.post("/auth/register/", userData);
+    const res = await API.post("auth/register/", userData);
     return res.data;
   },
 
   getCurrentUser: async () => {
-    const res = await API.get("/auth/me/");
+    const res = await API.get("auth/me/");
     return res.data;
   },
 

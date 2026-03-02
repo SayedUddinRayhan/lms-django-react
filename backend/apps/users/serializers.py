@@ -24,16 +24,25 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
         username = attrs.get("username")
         password = attrs.get("password")
 
-        user = authenticate(request=self.context.get("request"), username=username, password=password)
+        user = authenticate(
+            request=self.context.get("request"),
+            username=username,
+            password=password
+        )
+
         if not user:
             raise serializers.ValidationError("Invalid credentials")
 
         refresh = self.get_token(user)
 
-        data = {
+        return {
             "refresh": str(refresh),
             "access": str(refresh.access_token),
-            "role": user.role, 
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "phone": user.phone,
+                "role": user.role,
+            }
         }
-
-        return data

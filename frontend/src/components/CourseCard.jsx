@@ -1,27 +1,34 @@
-import { Link } from "react-router-dom";
+import { Star } from "lucide-react";
 
-export default function CourseCard({ course }) {
+const CourseCard = ({ course }) => {
   return (
-    <div className="bg-white rounded-xl shadow hover:shadow-lg transition">
+    <div className="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden">
       <img
         src={course.thumbnail}
-        className="h-48 w-full object-cover rounded-t-xl"
+        alt={course.title}
+        className="h-48 w-full object-cover"
       />
-      <div className="p-4">
-        <h3 className="font-bold text-lg">{course.title}</h3>
-        <p className="text-sm text-gray-500 mb-2">
-          ⭐ {course.average_rating || 0}
-        </p>
-        <p className="text-primary font-semibold">
-          {course.is_free ? "Free" : `৳ ${course.price}`}
-        </p>
-        <Link
-          to={`/courses/${course.slug}`}
-          className="block mt-3 bg-primary text-white text-center py-2 rounded-lg"
-        >
-          View Details
-        </Link>
+
+      <div className="p-5">
+        <h3 className="font-semibold text-lg">{course.title}</h3>
+
+        <div className="flex items-center mt-2 text-yellow-500">
+          <Star size={16} />
+          <span className="ml-1 text-gray-600">{course.rating || 4.8}</span>
+        </div>
+
+        <div className="mt-4 flex justify-between items-center">
+          <span className="font-bold text-indigo-600">
+            ৳{course.price}
+          </span>
+
+          <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700">
+            View
+          </button>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default CourseCard;
