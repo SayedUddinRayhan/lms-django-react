@@ -7,6 +7,8 @@ from django.db.models import Q, Prefetch
 from apps.users.permissions import RolePermission
 from apps.users.permissions import IsOwnerOrAdmin  
 
+from django.db.models import Count
+
 from .models import (
     Category, Course, Module, Lesson,
     Enrollment, LessonProgress, Review
@@ -21,7 +23,7 @@ from .serializers import (
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.filter(is_active=True)
+    queryset = Category.objects.filter(is_active=True).annotate(total_courses=Count('courses'))
     serializer_class = CategorySerializer
 
     # permission_classes = [
@@ -33,6 +35,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     allowed_roles = []
 
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ["category"]
     search_fields = ["name"]
     ordering_fields = ["name", "created_at"]
     ordering = ["name"]

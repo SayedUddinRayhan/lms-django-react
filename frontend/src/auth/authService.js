@@ -28,9 +28,19 @@ export const authService = {
     return res.data.access;
   },
 
-  logout: () => {
+  logout: async () => {
+  try {
+    const refresh = localStorage.getItem("refresh");
+
+    if (refresh) {
+      await API.post("auth/logout/", { refresh });
+    }
+  } catch (err) {
+    console.error("Logout error:", err);
+  } finally {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
     localStorage.removeItem("user");
-  },
+  }
+},
 };

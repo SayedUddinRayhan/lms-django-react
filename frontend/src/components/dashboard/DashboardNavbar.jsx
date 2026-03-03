@@ -8,8 +8,12 @@ import {
   HiUser,
   HiLogout,
 } from "react-icons/hi";
+import { useAuth } from "../../auth/AuthContext";
+
+
 
 const DashboardNavbar = ({ toggleSidebar }) => {
+  const { logout } = useAuth();
   const [theme, setTheme] = useState("light");
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -116,12 +120,12 @@ const DashboardNavbar = ({ toggleSidebar }) => {
               >
                 <HiUser /> Profile
               </a>
-              <a
-                href="#"
+              <button
+                onClick={logout}
                 className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 <HiLogout /> Sign Out
-              </a>
+              </button>
             </div>
           )}
         </div>

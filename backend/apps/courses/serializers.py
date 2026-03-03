@@ -5,9 +5,10 @@ from .models import (Category, Course, Module, Lesson, Enrollment, LessonProgres
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    total_courses = serializers.IntegerField(read_only=True)
     class Meta:
         model = Category
-        fields = ["id", "name", "slug", "is_active", "created_at", "updated_at"]
+        fields = ["id", "name", "total_courses", "slug", "is_active", "created_at", "updated_at"]
         read_only_fields = ["slug", "created_at", "updated_at"]
 
 
