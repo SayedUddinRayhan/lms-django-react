@@ -24,10 +24,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.filter(is_active=True)
     serializer_class = CategorySerializer
 
-    permission_classes = [
-        RolePermission,
-        DjangoModelPermissions,
-    ]
+    # permission_classes = [
+    #     RolePermission,
+    #     DjangoModelPermissions,
+    # ]
 
     # Only admin can create/update/delete
     allowed_roles = []
