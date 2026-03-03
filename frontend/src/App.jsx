@@ -11,7 +11,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 
 // Protected Pages
-import Dashboard from "./pages/dashboard/Dashboard";
+import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./auth/PrivateRoute";
 
 function App() {

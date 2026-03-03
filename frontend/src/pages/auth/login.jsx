@@ -1,11 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import { FaSpinner } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const Login = () => {
-  const { login, authError, isAuthLoading } = useAuth();
+  const { user, login, authError, isAuthLoading } = useAuth();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  
+    useEffect(() => {
+      if (user) {
+        navigate("/dashboard");
+      }
+    }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

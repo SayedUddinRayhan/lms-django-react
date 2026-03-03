@@ -43,14 +43,9 @@ export const AuthProvider = ({ children }) => {
       const user = await authService.login(credentials);
       setUser(user);
   
-      const roleRedirect = {
-        student: "/student/dashboard",
-        instructor: "/instructor/dashboard",
-      };
-  
-      navigate(roleRedirect[user.role] || "/");
+      // Redirect to generic dashboard
+      navigate("/dashboard"); // <- This ensures everyone goes to /dashboard
       return user;
-  
     } catch (err) {
       setAuthError(err.message || "Login failed");
       throw err;
