@@ -3,25 +3,29 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_nested import routers
 
 from .views import (
-    CategoryViewSet, CourseViewSet, ModuleViewSet, LessonViewSet,
-    EnrollmentViewSet, LessonProgressViewSet
+    CategoryViewSet,
+    CourseViewSet,
+    ModuleViewSet,
+    LessonViewSet,
+    EnrollmentViewSet,
+    LessonProgressViewSet,
+    InstructorDashboardView,
 )
 
 router = DefaultRouter()
 router.register(r"categories", CategoryViewSet, basename="category")
 router.register(r"courses", CourseViewSet, basename="course")
-router.register(r"modules", ModuleViewSet, basename="module")
-router.register(r"lessons", LessonViewSet, basename="lesson")
+router.register(r"modules", ModuleViewSet, basename="module") 
 router.register(r"enrollments", EnrollmentViewSet, basename="enrollment")
 router.register(r"lesson-progress", LessonProgressViewSet, basename="lessonprogress")
 
 
-# Modules nested under Courses
+# Modules under courses
 course_router = routers.NestedDefaultRouter(router, r"courses", lookup="course")
 course_router.register(r"modules", ModuleViewSet, basename="course-modules")
-course_router.register(r"lessons", LessonViewSet, basename="course-lessons")
 
-# Lessons nested under Modules
+
+# Lessons under modules
 module_router = routers.NestedDefaultRouter(router, r"modules", lookup="module")
 module_router.register(r"lessons", LessonViewSet, basename="module-lessons")
 
@@ -30,4 +34,5 @@ urlpatterns = [
     path("", include(router.urls)),
     path("", include(course_router.urls)),
     path("", include(module_router.urls)),
+    path("instructor/dashboard/", InstructorDashboardView.as_view(), name="instructor-dashboard"),
 ]

@@ -15,9 +15,17 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 
 // Dashboard Pages
-import StudentDashboard from "./pages/student/StudentDashboard";
-import InstructorDashboard from "./pages/instructor/InstructorDashboard";
 import GuestDashboard from "./pages/GuestDashboard";
+// import StudentDashboard from "./pages/student/MyCourses"; // use MyCourses.jsx
+import InstructorDashboard from "./pages/instructor/InstructorDashboard";
+import CreateCourse from "./pages/instructor/CreateCourse";
+// import EditCourse from "./pages/instructor/EditCourse";
+// import CourseModules from "./pages/instructor/CourseModules";
+// import AddModule from "./pages/instructor/AddModule";
+// import EditModule from "./pages/instructor/EditModule";
+// import ModuleLessons from "./pages/instructor/ModuleLessons";
+// import AddLesson from "./pages/instructor/AddLesson";
+// import EditLesson from "./pages/instructor/EditLesson";
 
 // Auth Guards
 import PrivateRoute from "./auth/PrivateRoute";
@@ -25,7 +33,7 @@ import PrivateRoute from "./auth/PrivateRoute";
 function App() {
   return (
     <Routes>
-      {/* Public Pages - Accessible to everyone */}
+      {/* Public Pages */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/categories" element={<ExploreCategories />} />
@@ -33,34 +41,30 @@ function App() {
         <Route path="/courses/:slug" element={<CourseDetails />} />
       </Route>
 
-      {/* Auth Pages - Only for unauthenticated users */}
+      {/* Auth Pages */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Route>
 
-      {/* Dashboard Routes - Protected + Role-Based */}
-      <Route 
-        element={
-          <PrivateRoute>
-            <DashboardLayout />
-          </PrivateRoute>
-        }
-      >
-        {/* Guest users (no role) see this */}
-        <Route 
-          path="/dashboard" 
-          element={
-            <PrivateRoute allowedRoles={[]}> {/* No roles = guest access */}
-              <GuestDashboard />
-            </PrivateRoute>
-          } 
-        />
-      </Route>
+      {/* Dashboard Routes (Protected) */}
+      <Route element={<PrivateRoute><DashboardLayout /></PrivateRoute>}>
+        {/* Guest (no role) */}
+        <Route path="/dashboard" element={<PrivateRoute allowedRoles={[]}><GuestDashboard /></PrivateRoute>} />
 
-       <Route element={<PrivateRoute allowedRoles={['student','instructor']}><DashboardLayout /></PrivateRoute>}>
-        <Route path="/dashboard/my-courses" element={<StudentDashboard />} />
-        <Route path="/dashboard/instructor/courses" element={<InstructorDashboard />} />
+        {/* Student Routes */}
+        {/* <Route path="/dashboard/my-courses" element={<PrivateRoute allowedRoles={['student']}><StudentDashboard /></PrivateRoute>} /> */}
+
+        {/* Instructor Routes */}
+        <Route path="/dashboard/instructor/courses" element={<PrivateRoute allowedRoles={['instructor']}><InstructorDashboard /></PrivateRoute>} />
+        <Route path="/dashboard/instructor/create-course" element={<PrivateRoute allowedRoles={['instructor']}><CreateCourse /></PrivateRoute>} />
+        {/* <Route path="/dashboard/instructor/courses/:courseId/edit" element={<PrivateRoute allowedRoles={['instructor']}><EditCourse /></PrivateRoute>} />
+        <Route path="/dashboard/instructor/courses/:courseId/modules" element={<PrivateRoute allowedRoles={['instructor']}><CourseModules /></PrivateRoute>} />
+        <Route path="/dashboard/instructor/courses/:courseId/modules/add" element={<PrivateRoute allowedRoles={['instructor']}><AddModule /></PrivateRoute>} />
+        <Route path="/dashboard/instructor/courses/:courseId/modules/:moduleId/edit" element={<PrivateRoute allowedRoles={['instructor']}><EditModule /></PrivateRoute>} />
+        <Route path="/dashboard/instructor/courses/:courseId/modules/:moduleId/lessons" element={<PrivateRoute allowedRoles={['instructor']}><ModuleLessons /></PrivateRoute>} />
+        <Route path="/dashboard/instructor/courses/:courseId/modules/:moduleId/lessons/add" element={<PrivateRoute allowedRoles={['instructor']}><AddLesson /></PrivateRoute>} />
+        <Route path="/dashboard/instructor/courses/:courseId/modules/:moduleId/lessons/:lessonId/edit" element={<PrivateRoute allowedRoles={['instructor']}><EditLesson /></PrivateRoute>} /> */}
       </Route>
 
       {/* 404 */}

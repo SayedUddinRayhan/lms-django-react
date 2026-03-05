@@ -64,7 +64,6 @@ class LessonProgressSerializer(serializers.ModelSerializer):
         read_only_fields = ["student","completed_at"]
 
     def update(self, instance, validated_data):
-        # mark completed automatically if passed validation
         if validated_data.get("is_completed") and not instance.is_completed:
             instance.mark_completed()
         return super().update(instance, validated_data)
@@ -143,3 +142,9 @@ class CourseSerializer(serializers.ModelSerializer):
         if not obj.instructor:
             return None
         return obj.instructor.get_full_name() or obj.instructor.username
+
+    def get_thumbnail(self, obj):
+        request = self.context.get('request')
+        if obj.thumbnail:
+            return request.build_absolute_uri(obj.thumbnail.url)
+        return None
