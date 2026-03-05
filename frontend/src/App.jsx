@@ -20,7 +20,7 @@ function App() {
      {/* Public Pages */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/courses/:id" element={<CourseDetails />} />
+        <Route path="/courses/:slug" element={<CourseDetails />} />
       </Route>
 
       {/* Auth Pages */}

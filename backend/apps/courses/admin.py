@@ -16,9 +16,9 @@ class CourseAdmin(admin.ModelAdmin):
     list_display = ("title", "slug", "instructor", "category", "price", "is_free", "status", "is_active", "created_at")
     list_filter = ("status", "is_active", "is_free", "category")
     search_fields = ("title", "description", "instructor__username")
-    readonly_fields = ("created_at", "updated_at")
     prepopulated_fields = {"slug": ("title",)}
-    actions = ["publish_courses", "archive_courses", "soft_delete_courses"]
+    readonly_fields = ("created_at", "updated_at")
+
 
     def publish_courses(self, request, queryset):
         updated = queryset.update(status="published")

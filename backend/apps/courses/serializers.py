@@ -106,9 +106,11 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    total_lessons = serializers.IntegerField(source="total_lessons", read_only=True)
-    total_students = serializers.IntegerField(source="total_students", read_only=True)
-    average_rating = serializers.FloatField(source="average_rating", read_only=True)
+    total_lessons = serializers.IntegerField(read_only=True)
+    total_students = serializers.IntegerField(read_only=True)
+    instructor_name = serializers.SerializerMethodField()
+    average_rating = serializers.FloatField(read_only=True)
+
     modules = ModuleSerializer(many=True, read_only=True)
     reviews = ReviewSerializer(many=True, read_only=True)
 
@@ -116,9 +118,20 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = [
             "id", "title", "slug", "description", "thumbnail",
-            "category", "instructor", "price", "is_free",
+            "category", "instructor_name", "price", "is_free",
             "status", "is_active", "created_at", "updated_at",
             "total_lessons", "total_students", "average_rating",
             "modules", "reviews"
         ]
-        read_only_fields = ["slug", "created_at", "updated_at", "total_lessons", "total_students", "average_rating"]
+        read_only_fields = [
+            "slug", "created_at", "updated_at",
+            "total_lessons", "total_students", "average_rating"
+        ]
+    def get_instructor_name(self, obj):
+        """
+        Industry-grade safe fallback:
+        full_name → username → empty string
+        """
+        if obj.instructor.get_full_name():
+            return obj.instructor.get_full_name()
+        return obj.instructor.username

@@ -4,11 +4,13 @@ import Footer from "../components/Footer";
 
 const PublicLayout = () => {
   return (
-    <>
+    <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col">
       <Navbar />
+      <main className="flex-1 pt-20">
         <Outlet />
+      </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

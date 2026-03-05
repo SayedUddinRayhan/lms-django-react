@@ -46,7 +46,7 @@ class Course(models.Model):
     )
 
     title = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=True, blank=True, max_length=200)
     description = models.TextField()
 
     thumbnail = models.ImageField(upload_to="courses/thumbnails/", blank=True, null=True)

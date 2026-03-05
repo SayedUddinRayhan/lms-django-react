@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import API from "../api/apiClient";
 import { HiChevronRight } from "react-icons/hi";
+import { Link } from "react-router-dom";
 
 function ExploreCategories() {
   const [categories, setCategories] = useState([]);
@@ -13,17 +14,23 @@ function ExploreCategories() {
   const fetchCategories = async () => {
     try {
       setLoadingCategories(true);
-      const res = await API.get("/courses/categories");
-      const data = res.data.results || res.data;
-
+  
+      const res = await API.get("/courses/categories/");
+      const data = res.data.results ?? res.data ?? [];
+  
+      if (!Array.isArray(data)) {
+        console.warn("Unexpected categories response:", res.data);
+        return;
+      }
+  
       setCategories(data);
-
+  
       if (data.length > 0) {
         setActiveCategory(data[0].id);
         fetchCourses(data[0].id);
       }
     } catch (err) {
-      console.error(err);
+      console.error("Category fetch error:", err.response?.data || err);
     } finally {
       setLoadingCategories(false);
     }
@@ -31,35 +38,23 @@ function ExploreCategories() {
 
   // Fetch courses by category
   const fetchCourses = async (categoryId) => {
-  try {
-    setLoadingCourses(true);
-
-    const res = await API.get(`/courses/courses/?category=${categoryId}`);
-
-    let data = [];
-
-    // Case 1: Paginated response
-    if (Array.isArray(res.data.results)) {
-      data = res.data.results;
+    try {
+      setLoadingCourses(true);
+  
+      const res = await API.get("/courses/courses/", {
+        params: { category: categoryId },
+      });
+      console.log(res.data);
+      const data = res.data.results ?? res.data ?? [];
+  
+      setCourses(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Course fetch error:", err.response?.data || err);
+      setCourses([]);
+    } finally {
+      setLoadingCourses(false);
     }
-    // Case 2: Direct array response
-    else if (Array.isArray(res.data)) {
-      data = res.data;
-    }
-    // Case 3: Unexpected object
-    else {
-      console.warn("Unexpected courses response:", res.data);
-      data = [];
-    }
-
-    setCourses(data);
-  } catch (err) {
-    console.error("Course fetch error:", err);
-    setCourses([]);
-  } finally {
-    setLoadingCourses(false);
-  }
-};
+  };
 
   useEffect(() => {
     fetchCategories();
@@ -102,44 +97,88 @@ function ExploreCategories() {
           ))}
         </div>
 
-        {/* Courses Grid */}
-        {loadingCourses ? (
-          <div className="text-center text-gray-500">Loading courses...</div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {courses.map((course) => (
-              <div
-                key={course.id}
-                className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl transition overflow-hidden"
-              >
-                <img
-                  src={course.thumbnail}
-                  alt={course.title}
-                  className="w-full h-48 object-cover"
-                />
+       {/* Courses Grid */}
+{loadingCourses ? (
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+    {[...Array(8)].map((_, index) => (
+      <div
+        key={index}
+        className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden animate-pulse"
+      >
+        <div className="w-full h-48 bg-gray-200 dark:bg-gray-700" />
+        <div className="p-5 space-y-3">
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
+          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3" />
+        </div>
+      </div>
+    ))}
+  </div>
+) : courses.length === 0 ? (
+  <div className="text-center py-20">
+    <p className="text-gray-500 dark:text-gray-400 text-lg">
+      No courses available in this category.
+    </p>
+  </div>
+) : (
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+    {courses.map((course) => (
+      <Link
+      to={`/courses/${course.slug}`}
+      key={course.id}
+      className="group bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700"
+    >
+        {/* Thumbnail */}
+        <div className="relative">
+          <img
+            src={course.thumbnail || "/placeholder.jpg"}
+            alt={course.title}
+            className="w-full h-48 object-cover group-hover:scale-105 transition duration-300"
+          />
 
-                <div className="p-5">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    {course.title}
-                  </h3>
+          {course.is_free && (
+            <span className="absolute top-3 left-3 bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+              Free
+            </span>
+          )}
+        </div>
 
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-                    {course.instructor_name}
-                  </p>
+        {/* Content */}
+        <div className="p-5">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-2 mb-2">
+            {course.title}
+          </h3>
 
-                  <div className="flex items-center justify-between">
-                    <span className="text-indigo-600 font-bold">
-                      ৳ {course.price}
-                    </span>
-                    <button className="text-sm bg-indigo-600 text-white px-4 py-1.5 rounded-lg hover:bg-indigo-700 transition">
-                      Enroll
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+            {course.instructor_name}
+          </p>
+
+          {/* Rating + Lessons */}
+          <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
+            <span>
+              ⭐ {course.average_rating?.toFixed(1) || "0.0"}
+            </span>
+            <span>
+              {course.total_lessons} Lessons
+            </span>
           </div>
-        )}
+
+          {/* Price + Action */}
+          <div className="flex items-center justify-between">
+            <span className="text-indigo-600 font-bold text-lg">
+              {course.is_free ? "Free" : `৳ ${Number(course.price).toLocaleString()}`}
+            </span>
+
+            <button className="text-sm bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+              Enroll
+            </button>
+          </div>
+        </div>
+      </Link>
+    ))}
+  </div>
+)}
+         
 
       </div>
     </section>

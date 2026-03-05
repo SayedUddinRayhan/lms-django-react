@@ -9,6 +9,8 @@ from apps.users.permissions import IsOwnerOrAdmin
 
 from django.db.models import Count
 
+from django_filters.rest_framework import DjangoFilterBackend
+
 from .models import (
     Category, Course, Module, Lesson,
     Enrollment, LessonProgress, Review
@@ -47,15 +49,21 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
-    permission_classes = [
-        RolePermission,
-        DjangoModelPermissions,
-        IsOwnerOrAdmin,
+    lookup_field = "slug"
+    # permission_classes = [
+    #     RolePermission,
+    #     DjangoModelPermissions,
+    #     IsOwnerOrAdmin,
+    # ]
+
+    allowed_roles = []
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter
     ]
-
-    allowed_roles = ["instructor"]
-
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ["category"]
     search_fields = ["title", "description", "category__name"]
     ordering_fields = ["created_at", "price"]
     ordering = ["-created_at"]
