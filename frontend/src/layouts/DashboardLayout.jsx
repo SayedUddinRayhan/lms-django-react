@@ -1,54 +1,44 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
+import { Outlet } from "react-router-dom";
 import DashboardSidebar from "../components/dashboard/DashboardSidebar";
 import DashboardNavbar from "../components/dashboard/DashboardNavbar";
+import Footer from "../components/Footer";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const DashboardLayout = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(true);
-
-  // Auto collapse on mobile
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1024) {
-        setIsOpen(false); // collapsed (icon only)
-      } else {
-        setIsOpen(true); // expanded
-      }
-    };
-
-    handleResize(); // run once
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const toggleSidebar = () => {
-    setIsOpen((prev) => !prev);
-  };
-
-  const closeSidebar = () => {
-    if (window.innerWidth < 1024) {
-      setIsOpen(false);
-    }
-  };
+function DashboardLayout() {
+  const [sidebarOpen, setSidebarOpen] = useState(false); // mobile sidebar
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false); // desktop collapse
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-900 overflow-hidden">
+    <div className="flex min-h-screen overflow-x-auto">
+
       {/* Sidebar */}
-      <DashboardSidebar isOpen={isOpen} closeSidebar={closeSidebar} />
+      <DashboardSidebar
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        sidebarCollapsed={sidebarCollapsed}
+        setSidebarCollapsed={setSidebarCollapsed}
+      />
 
-      {/* Content */}
+      {/* Main Content */}
       <div
-        className={`flex-1 flex flex-col transition-all duration-300 ${
-          isOpen ? "lg:ml-72 ml-20" : "ml-20"
-        }`}
+        className={`flex-1 flex flex-col transition-all duration-300
+          ${sidebarCollapsed ? "lg:ml-20" : "lg:ml-64"}
+        `}
       >
-        <DashboardNavbar toggleSidebar={toggleSidebar} />
+        {/* Navbar */}
+        <DashboardNavbar onMobileMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick pauseOnHover />
 
-        <main className="flex-1 p-4 overflow-auto">
-          {children}
+        {/* Page Content */}
+        <main className="flex-1 p-4 bg-gray-100">
+          <Outlet />
         </main>
+
       </div>
     </div>
   );
-};
+}
 
 export default DashboardLayout;

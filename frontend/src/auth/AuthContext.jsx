@@ -1,6 +1,7 @@
+// src/auth/AuthContext.jsx
 import { createContext, useState, useEffect, useContext } from "react";
-import { authService } from "./authService";
 import { useNavigate } from "react-router-dom";
+import { authService } from "./authService";
 
 const AuthContext = createContext();
 
@@ -16,35 +17,51 @@ export const AuthProvider = ({ children }) => {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
 
-  const initUser = async () => {
-    setIsAuthLoading(true);
-    const token = localStorage.getItem("access");
-    if (token) {
-      try {
-        const currentUser = await authService.getCurrentUser();
-        setUser(currentUser);
-      } catch (err) {
-        authService.logout();
-        setUser(null);
-      }
-    }
-    setIsAuthLoading(false);
-  };
-
+  // Initialize auth state on mount
   useEffect(() => {
-    initUser();
+    const initAuth = async () => {
+      const token = localStorage.getItem("access");
+      if (token) {
+        try {
+          const currentUser = await authService.getCurrentUser();
+          setUser(currentUser);
+          // ✅ Redirect based on role AFTER loading user
+          redirectToDashboard(currentUser?.role);
+        } catch (err) {
+          authService.logout();
+          setUser(null);
+        }
+      }
+      setIsAuthLoading(false);
+    };
+    initAuth();
   }, []);
 
-  const login = async (credentials) => {
+  // ✅ Centralized role-based redirect
+  const redirectToDashboard = (role) => {
+    if (!role) return; // Guest stays on public pages
+    
+    if (role === "student") {
+      if (window.location.pathname === "/login") {
+        navigate("/dashboard/my-courses", { replace: true });
+      }
+    } else if (role === "instructor") {
+      if (window.location.pathname === "/login") {
+        navigate("/dashboard/instructor/courses", { replace: true });
+      }
+    }
+    // Admin can be handled similarly if needed
+  };
+
+  const login = async ({ identifier, password }) => {
     setAuthError(null);
     setIsAuthLoading(true);
   
     try {
-      const user = await authService.login(credentials);
+      const user = await authService.login({ identifier, password });
       setUser(user);
-  
-      // Redirect to generic dashboard
-      navigate("/dashboard"); // <- This ensures everyone goes to /dashboard
+      // ✅ Redirect immediately after login
+      redirectToDashboard(user?.role);
       return user;
     } catch (err) {
       setAuthError(err.message || "Login failed");

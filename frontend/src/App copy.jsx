@@ -9,23 +9,18 @@ import Home from "./pages/public/Home";
 import ExploreCategories from "./components/ExploreCategories";
 import FeaturedCourses from "./components/FeaturedCourses";
 import CourseDetails from "./pages/public/CourseDetails";
-
-// Auth Pages
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 
-// Dashboard Pages
+// Protected Pages
 import StudentDashboard from "./pages/student/StudentDashboard";
 import InstructorDashboard from "./pages/instructor/InstructorDashboard";
-import GuestDashboard from "./pages/GuestDashboard";
-
-// Auth Guards
 import PrivateRoute from "./auth/PrivateRoute";
 
 function App() {
   return (
     <Routes>
-      {/* Public Pages - Accessible to everyone */}
+     {/* Public Pages */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/categories" element={<ExploreCategories />} />
@@ -33,42 +28,32 @@ function App() {
         <Route path="/courses/:slug" element={<CourseDetails />} />
       </Route>
 
-      {/* Auth Pages - Only for unauthenticated users */}
+      {/* Auth Pages */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Route>
 
-      {/* Dashboard Routes - Protected + Role-Based */}
-      <Route 
-        element={
-          <PrivateRoute>
-            <DashboardLayout />
-          </PrivateRoute>
-        }
-      >
-        {/* Guest users (no role) see this */}
-        <Route 
-          path="/dashboard" 
-          element={
-            <PrivateRoute allowedRoles={[]}> {/* No roles = guest access */}
-              <GuestDashboard />
-            </PrivateRoute>
-          } 
-        />
-      </Route>
+      {/* Dashboard */}
+      <Route element={<PrivateRoute><DashboardLayout /></PrivateRoute>}>
 
-       <Route element={<PrivateRoute allowedRoles={['student','instructor']}><DashboardLayout /></PrivateRoute>}>
+        {/* Student */}
         <Route path="/dashboard/my-courses" element={<StudentDashboard />} />
+
+        {/* Instructor */}
         <Route path="/dashboard/instructor/courses" element={<InstructorDashboard />} />
+
       </Route>
 
       {/* 404 */}
-      <Route path="*" element={
-        <div className="flex items-center justify-center min-h-screen text-2xl font-bold text-gray-500">
-          404 | Page Not Found
-        </div>
-      } />
+      <Route
+        path="*"
+        element={
+          <div className="flex items-center justify-center h-screen text-2xl font-bold">
+            404 | Page Not Found
+          </div>
+        }
+      />
     </Routes>
   );
 }

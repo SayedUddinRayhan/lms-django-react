@@ -1,37 +1,50 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 class RolePermission(BasePermission):
-
+    """
+    View-level permission:
+    - Safe methods (GET, HEAD, OPTIONS) allowed for all.
+    - Admin: full access.
+    - Other roles: allowed_roles must be defined in the view.
+    """
     def has_permission(self, request, view):
         user = request.user
         if not user or not user.is_authenticated:
             return False
 
-        # All roles can GET (safe methods)
+        # Safe methods are allowed for everyone
         if request.method in SAFE_METHODS:
             return True
 
-        # Admin bypass: full access
-        if user.is_admin_role:
+        # Admin: full access
+        if hasattr(user, "is_admin_role") and user.is_admin_role:
             return True
 
-        # Allowed roles defined in view
+        # Allowed roles defined on the view
         allowed_roles = getattr(view, "allowed_roles", [])
         return user.role in allowed_roles
-    
+
+
 class IsOwnerOrAdmin(BasePermission):
     """
-    Admin can modify anything.
-    Instructor/Student can modify only their own objects.
+    Object-level permission:
+    - Admin can modify any object.
+    - Instructor can modify objects where obj.instructor == request.user
+    - Student can modify objects where obj.student == request.user
     """
-
     def has_object_permission(self, request, view, obj):
-        if request.user.is_admin_role:
+        user = request.user
+
+        # Admin can do anything
+        if hasattr(user, "is_admin_role") and user.is_admin_role:
             return True
-        # Instructor modifies only own courses/modules/lessons
-        if hasattr(obj, "instructor") and obj.instructor == request.user:
+
+        # Instructor modifies own courses/modules/lessons
+        if hasattr(obj, "instructor") and obj.instructor == user:
             return True
-        # Student modifies only their own enrollment/review
-        if hasattr(obj, "student") and obj.student == request.user:
+
+        # Student modifies own enrollments/progress
+        if hasattr(obj, "student") and obj.student == user:
             return True
+
         return False

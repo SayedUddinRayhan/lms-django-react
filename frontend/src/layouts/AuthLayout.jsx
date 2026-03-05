@@ -8,7 +8,7 @@ const AuthLayout = () => {
     <>
       <Navbar />
 
-      <main className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <main className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 overflow-y-auto">
         <Outlet />
       </main>
 

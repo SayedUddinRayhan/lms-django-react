@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models import Category, Course, Module, Lesson, Enrollment, LessonProgress, Review
+from .models import Category, Course, Module, Lesson, Enrollment, LessonProgress
 
 
+# Category
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("name", "slug", "is_active", "created_at", "updated_at")
@@ -11,6 +12,7 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
 
+# Course
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
     list_display = ("title", "slug", "instructor", "category", "price", "is_free", "status", "is_active", "created_at")
@@ -18,7 +20,7 @@ class CourseAdmin(admin.ModelAdmin):
     search_fields = ("title", "description", "instructor__username")
     prepopulated_fields = {"slug": ("title",)}
     readonly_fields = ("created_at", "updated_at")
-
+    actions = ["publish_courses", "archive_courses", "soft_delete_courses"]
 
     def publish_courses(self, request, queryset):
         updated = queryset.update(status="published")
@@ -35,14 +37,14 @@ class CourseAdmin(admin.ModelAdmin):
         self.message_user(request, f"{updated} course(s) deactivated.")
     soft_delete_courses.short_description = "Deactivate selected courses"
 
-
+# Module
 @admin.register(Module)
 class ModuleAdmin(admin.ModelAdmin):
     list_display = ("title", "course", "order", "is_active")
     list_filter = ("is_active", "course")
     search_fields = ("title", "course__title")
 
-
+# Lesson
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
     list_display = ("title", "module", "content_type", "order", "is_active")
@@ -55,22 +57,17 @@ class LessonAdmin(admin.ModelAdmin):
         self.message_user(request, f"{updated} lesson(s) deactivated.")
     soft_delete_lessons.short_description = "Deactivate selected lessons"
 
-
+# Enrollment
 @admin.register(Enrollment)
 class EnrollmentAdmin(admin.ModelAdmin):
-    list_display = ("student", "course", "price_paid", "payment_status", "completed", "is_active", "enrolled_at")
-    list_filter = ("payment_status", "completed", "is_active", "course")
+    list_display = ("student", "course", "enrolled_at")
+    list_filter = ("course",)
     search_fields = ("student__username", "course__title")
 
+
+# LessonProgress
 @admin.register(LessonProgress)
 class LessonProgressAdmin(admin.ModelAdmin):
     list_display = ("student", "lesson", "is_completed", "watched_seconds", "completed_at")
     list_filter = ("is_completed",)
     search_fields = ("student__username", "lesson__title")
-
-
-@admin.register(Review)
-class ReviewAdmin(admin.ModelAdmin):
-    list_display = ("student", "course", "rating", "is_active", "created_at")
-    list_filter = ("rating", "is_active")
-    search_fields = ("student__username", "course__title", "comment")

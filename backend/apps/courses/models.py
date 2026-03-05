@@ -121,9 +121,6 @@ class Course(models.Model):
             payment_status="paid"
         ).count()
 
-    @property
-    def average_rating(self):
-        return self.reviews.aggregate(avg=Avg("rating"))["avg"] or 0
 
     def __str__(self):
         return self.title
@@ -220,13 +217,6 @@ class Lesson(models.Model):
 
 class Enrollment(models.Model):
 
-    PAYMENT_STATUS = (
-        ("pending", "Pending"),
-        ("paid", "Paid"),
-        ("failed", "Failed"),
-        ("refunded", "Refunded"),
-    )
-
     student = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -236,40 +226,14 @@ class Enrollment(models.Model):
 
     course = models.ForeignKey(
         Course,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="enrollments"
     )
-
-    price_paid = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_status = models.CharField(
-        max_length=20,
-        choices=PAYMENT_STATUS,
-        default="pending",
-        db_index=True
-    )
-
-    completed = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
 
     enrolled_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ["student", "course"]
-        ordering = ["-enrolled_at"]
-
-    def __str__(self):
-        return f"{self.student} - {self.course}"
-    
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
-
-    def clean(self):
-        if self.course.is_free and self.price_paid != 0:
-            raise ValidationError("Free course cannot have payment.")
-
-        if not self.course.is_free and self.price_paid <= 0:
-            raise ValidationError("Paid course must have price.")
 
 
 class LessonProgress(models.Model):
@@ -312,34 +276,4 @@ class LessonProgress(models.Model):
 
 
     
-
-class Review(models.Model):
-
-    student = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
-    )
-
-    course = models.ForeignKey(
-        Course,
-        on_delete=models.CASCADE,
-        related_name="reviews"
-    )
-
-    rating = models.PositiveSmallIntegerField(
-        validators=[
-        MinValueValidator(1),
-        MaxValueValidator(5)
-    ]
-    )
-    comment = models.TextField(blank=True)
-    is_active = models.BooleanField(default=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ["student", "course"]
-
-    def __str__(self):
-        return f"{self.student} - {self.course} ({self.rating})"
     

@@ -13,13 +13,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import (
     Category, Course, Module, Lesson,
-    Enrollment, LessonProgress, Review
+    Enrollment, LessonProgress
 )
 
 from .serializers import (
     CategorySerializer, CourseSerializer, ModuleSerializer,
     LessonSerializer, EnrollmentSerializer,
-    LessonProgressSerializer, ReviewSerializer
+    LessonProgressSerializer
 )
 
 
@@ -78,8 +78,7 @@ class CourseViewSet(viewsets.ModelViewSet):
                     "modules__lessons",
                     queryset=Lesson.objects.filter(is_active=True)
                 ),
-                "enrollments",
-                "reviews",
+                "enrollments"
             )
 
         if not user.is_authenticated:
@@ -201,30 +200,3 @@ class LessonProgressViewSet(viewsets.ModelViewSet):
 
         return qs.none()
 
-
-
-class ReviewViewSet(viewsets.ModelViewSet):
-    serializer_class = ReviewSerializer
-    permission_classes = [RolePermission, DjangoModelPermissions]
-    allowed_roles = ["student"]
-
-    def get_queryset(self):
-        user = self.request.user
-
-        qs = Review.objects.filter(is_active=True) \
-            .select_related(
-                "student",
-                "course",
-                "course__instructor"
-            )
-
-        if user.is_admin_role:
-            return qs
-
-        if user.is_student_role:
-            return qs.filter(student=user)
-
-        if user.is_instructor_role:
-            return qs.filter(course__instructor=user)
-
-        return qs.none()

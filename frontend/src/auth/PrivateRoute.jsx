@@ -1,13 +1,36 @@
-import { Navigate } from "react-router-dom";
-import { useAuth } from "./AuthContext";
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 
-const PrivateRoute = ({ children, role }) => {
-  const { user } = useAuth();
+export default function PrivateRoute({ children, allowedRoles = [] }) {
+  const { user, isAuthLoading } = useAuth();
+  const location = useLocation();
 
-  if (!user) return <Navigate to="/login" />;
-  if (role && user.role !== role) return <Navigate to="/" />;
+  const getDashboard = (role) => {
+    if (role === "student") return "/dashboard/my-courses";
+    if (role === "instructor") return "/dashboard/instructor/courses";
+    if (role === "admin") return "/dashboard/admin";
+    return "/";
+  };
+
+  if (isAuthLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
+
+  if (!user) return <Navigate to="/login" state={{ from: location }} replace />;
+
+  // Redirect logged-in users away from login/register
+  if (location.pathname.startsWith("/login") || location.pathname.startsWith("/register")) {
+    return <Navigate to={getDashboard(user.role)} replace />;
+  }
+
+  // Role-based access
+  if (allowedRoles.length && !allowedRoles.includes(user.role)) {
+    return <Navigate to={getDashboard(user.role)} replace />;
+  }
 
   return children;
-};
-
-export default PrivateRoute;
+}
