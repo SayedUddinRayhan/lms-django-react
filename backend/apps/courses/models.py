@@ -114,24 +114,6 @@ class Course(models.Model):
             if not Lesson.objects.filter(module__course=self, is_active=True).exists():
                 raise ValidationError("At least one lesson required.")
 
-    @property
-    def total_lessons(self):
-        if not self.pk:
-            return 0
-        return Lesson.objects.filter(module__course=self, is_active=True).count()
-
-    @property
-    def total_modules(self):
-        if not self.pk:
-            return 0
-        return self.modules.filter(is_active=True).count()
-
-    @property
-    def total_courses(self):
-        if not self.pk:
-            return 0
-        return Course.objects.filter(instructor=self.instructor, is_active=True).count()
-
 
     def __str__(self):
         return self.title
@@ -218,8 +200,8 @@ class Lesson(models.Model):
         return f"{self.module.title} - {self.title}"
 
     def clean(self):
-        if self.content_type == "video" and not self.video_url:
-            raise ValidationError("Video URL required.")
+        if self.content_type == "video" and not (self.video_url or self.file):
+            raise ValidationError("Either video URL or file must be set for a video lesson.")
         if self.content_type == "article" and not self.content:
             raise ValidationError("Article content required.")
         if self.content_type == "file" and not self.file:

@@ -23,6 +23,13 @@ export default function CourseDetails() {
 
         setCourse(res.data);
 
+        // // expand first module
+        // if (res.data.modules?.length) {
+        //   setExpandedModules({
+        //     [res.data.modules[0].id]: true,
+        //   });
+        // }
+
       } catch (err) {
         console.error(err);
         if (mounted) {
@@ -47,17 +54,21 @@ export default function CourseDetails() {
     }));
   };
 
+  /* ---------------- Loading ---------------- */
+
   if (loading) {
     return (
-      <div className="py-32 text-center text-gray-500 dark:text-gray-400">
+      <div className="py-32 text-center text-gray-500">
         Loading course...
       </div>
     );
   }
 
+  /* ---------------- Error ---------------- */
+
   if (error || !course) {
     return (
-      <div className="py-32 text-center text-gray-500 dark:text-gray-400">
+      <div className="py-32 text-center text-gray-500">
         {error === "not_found"
           ? "Course not found"
           : "Failed to load course"}
@@ -65,12 +76,16 @@ export default function CourseDetails() {
     );
   }
 
+  /* ---------------- Page ---------------- */
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-16">
 
       {/* ================= HEADER ================= */}
 
       <div className="grid md:grid-cols-2 gap-10">
+
+        {/* Thumbnail */}
 
         <img
           src={course.thumbnail}
@@ -83,31 +98,34 @@ export default function CourseDetails() {
           }}
         />
 
+        {/* Info */}
+
         <div>
-          <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+
+          <h1 className="text-4xl font-bold mb-4 text-gray-900">
             {course.title}
           </h1>
 
-          <p className="text-gray-600 dark:text-gray-300 mb-4">
+          <p className="text-gray-600 mb-4">
             Instructor: {course.instructor_name}
           </p>
 
-          <p className="text-gray-700 dark:text-gray-300 mb-6 whitespace-pre-line">
+          <p className="text-gray-700 mb-6 whitespace-pre-line">
             {course.description}
           </p>
 
-          <div className="flex gap-6 text-gray-700 dark:text-gray-300 mb-6">
+          <div className="flex gap-6 text-gray-700 mb-6">
             <span>{course.total_modules} Modules</span>
             <span>{course.total_lessons} Lessons</span>
           </div>
 
-          <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-6">
+          <div className="text-2xl font-bold text-indigo-600 mb-6">
             {course.is_free
               ? "Free"
               : `৳ ${Number(course.price || 0).toLocaleString()}`}
           </div>
 
-          <button className="bg-indigo-600 dark:bg-indigo-500 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition">
+          <button className="bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition">
             Enroll Now
           </button>
 
@@ -117,67 +135,85 @@ export default function CourseDetails() {
       {/* ================= CURRICULUM ================= */}
 
       <div className="mt-16">
-        <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">
+
+        <h2 className="text-2xl font-bold mb-6 text-gray-900">
           Course Curriculum
         </h2>
 
         <div className="space-y-4">
+
           {course.modules?.length ? (
             course.modules.map((module, i) => {
+
               const expanded = expandedModules[module.id];
 
               return (
                 <div
                   key={module.id}
-                  className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden"
+                  className="bg-gray-100 rounded-lg overflow-hidden"
                 >
 
                   {/* Module header */}
+
                   <button
                     onClick={() => toggleModule(module.id)}
-                    className="w-full flex justify-between items-center px-5 py-4 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                    className="w-full flex justify-between items-center px-5 py-4 hover:bg-gray-200 transition"
                   >
-                    <span className="font-semibold text-lg text-gray-900 dark:text-gray-100">
+
+                    <span className="font-semibold text-lg">
                       Module {i + 1}: {module.title}
                     </span>
 
-                    <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
+                    <span className="text-xl font-bold text-indigo-600">
                       {expanded ? "−" : "+"}
                     </span>
+
                   </button>
 
                   {/* Lessons */}
+
                   {expanded && (
                     <ul className="px-6 pb-4 space-y-2">
+
                       {module.lessons?.length ? (
                         module.lessons.map((lesson, j) => (
+
                           <li
                             key={lesson.id}
-                            className="flex justify-between items-center text-gray-700 dark:text-gray-300 py-2"
+                            className="flex justify-between items-center text-gray-700 py-2"
                           >
+
                             <div className="flex items-center gap-3">
+
                               <span>{j + 1}.</span>
+
                               <span>{lesson.title}</span>
-                              <span className="px-2 py-0.5 text-xs rounded bg-gray-200 dark:bg-gray-700 dark:text-gray-200">
+
+                              <span className="px-2 py-0.5 text-xs rounded bg-gray-200">
                                 {lesson.content_type}
                               </span>
-                              <span className="text-gray-400 dark:text-gray-500">
+
+                              <span className="text-gray-400">
                                 🔒
                               </span>
+
                             </div>
 
                             {lesson.duration_minutes > 0 && (
-                              <span className="text-sm text-gray-500 dark:text-gray-400">
+                              <span className="text-sm text-gray-500">
                                 {lesson.duration_minutes} min
                               </span>
                             )}
+
                           </li>
+
                         ))
                       ) : (
-                        <li className="text-gray-500 dark:text-gray-400">
+                        <li className="text-gray-500">
                           No lessons available
                         </li>
                       )}
+
                     </ul>
                   )}
 
@@ -185,10 +221,11 @@ export default function CourseDetails() {
               );
             })
           ) : (
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="text-gray-500">
               No modules available for this course.
             </p>
           )}
+
         </div>
       </div>
 

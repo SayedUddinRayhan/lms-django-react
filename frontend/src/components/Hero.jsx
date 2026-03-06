@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 const Hero = () => {
   return (
     <section className="relative h-screen flex items-center">
@@ -14,9 +15,9 @@ const Hero = () => {
         <p className="text-lg md:text-xl mb-8 text-gray-200">
           Join thousands of learners from around the world mastering new skills
         </p>
-        <button className="bg-indigo-600 hover:bg-indigo-700 px-8 py-4 rounded-full text-lg font-semibold transition">
+        <Link to={"/courses" } className="bg-indigo-600 hover:bg-indigo-700 px-8 py-4 rounded-full text-lg font-semibold transition">
           Explore Courses
-        </button>
+        </Link>
       </div>
     </section>
   );

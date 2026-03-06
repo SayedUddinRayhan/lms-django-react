@@ -1,22 +1,16 @@
 import { useEffect, useState, useRef } from "react";
 import API from "../api/apiClient";
-import { FaChevronLeft, FaChevronRight, FaBook, FaLayerGroup } from "react-icons/fa";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { toast } from "react-toastify";
+import { FaChevronLeft, FaChevronRight, FaBook, FaLayerGroup, FaUserGraduate } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
-export default function FeaturedCourses() {
+export default function ExploreCourses() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [enrollingId, setEnrollingId] = useState(null);
-
   const carouselRef = useRef(null);
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
-  // Fetch courses on mount
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -34,18 +28,13 @@ export default function FeaturedCourses() {
     fetchCourses();
   }, []);
 
-  // Carousel scroll
   const scroll = (direction) => {
     if (carouselRef.current) {
       const scrollAmount = 320;
-      carouselRef.current.scrollBy({ 
-        left: direction === "left" ? -scrollAmount : scrollAmount, 
-        behavior: "smooth" 
-      });
+      carouselRef.current.scrollBy({ left: direction === "left" ? -scrollAmount : scrollAmount, behavior: "smooth" });
     }
   };
 
-  // Touch handlers
   const handleTouchStart = (e) => (touchStartX.current = e.touches[0].clientX);
   const handleTouchMove = (e) => (touchEndX.current = e.touches[0].clientX);
   const handleTouchEnd = () => {
@@ -53,57 +42,10 @@ export default function FeaturedCourses() {
     if (touchStartX.current - touchEndX.current < -50) scroll("left");
   };
 
-  // Auto-scroll
   useEffect(() => {
     const interval = setInterval(() => scroll("right"), 4000);
     return () => clearInterval(interval);
   }, []);
-
-  // Enroll handler
-  const handleEnroll = async (e, course) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const token = localStorage.getItem("access");
-
-    // Not logged in → Save & redirect
-    if (!token) {
-      localStorage.setItem("pendingEnrollCourse", course.id);
-      toast.info("Please login to enroll");
-      navigate("/login", { state: { from: location.pathname } });
-      return;
-    }
-
-    // Logged in → Enroll directly
-    try {
-      setEnrollingId(course.id);
-
-      // Check if already enrolled
-      const res = await API.get("courses/enrollments/", {
-        params: { course: course.id }
-      });
-      const results = res.data?.results || res.data || [];
-      const isAlreadyEnrolled = Array.isArray(results)
-        ? results.some(enr => enr.course == course.id)
-        : false;
-
-      if (isAlreadyEnrolled) {
-        toast.info("You're already enrolled in this course!");
-        return;
-      }
-
-      // Create enrollment
-      await API.post("courses/enrollments/", { course: course.id });
-      toast.success("Successfully enrolled!");
-      navigate("/dashboard/student");
-
-    } catch (err) {
-      console.error("Enrollment error:", err);
-      toast.error(err.response?.data?.detail || "Enrollment failed.");
-    } finally {
-      setEnrollingId(null);
-    }
-  };
 
   return (
     <section className="py-24 bg-gray-50 dark:bg-gray-900 transition">
@@ -173,6 +115,7 @@ export default function FeaturedCourses() {
                       </h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400">{course.instructor_name}</p>
 
+                      {/* Only show total modules & lessons */}
                       <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mt-1">
                         <div className="flex items-center gap-1">
                           <FaLayerGroup /> {course.total_modules ?? 0} Modules
@@ -186,21 +129,8 @@ export default function FeaturedCourses() {
                         <span className="text-indigo-600 font-bold text-lg">
                           {course.is_free ? "Free" : `৳ ${Number(course.price).toLocaleString()}`}
                         </span>
-                        
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleEnroll(e, course);
-                          }}
-                          disabled={enrollingId === course.id}
-                          className={`text-sm px-4 py-2 rounded-lg transition ${
-                            enrollingId === course.id
-                              ? "bg-indigo-400 cursor-not-allowed"
-                              : "bg-indigo-600 text-white hover:bg-indigo-700"
-                          }`}
-                        >
-                          {enrollingId === course.id ? "..." : "Enroll"}
+                        <button className="text-sm bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                          Enroll
                         </button>
                       </div>
                     </div>

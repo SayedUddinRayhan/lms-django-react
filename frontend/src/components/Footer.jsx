@@ -1,11 +1,11 @@
 const Footer = () => {
   return (
     <footer className="bg-gray-900 text-gray-400 transition">
-      <div className="max-w-7xl mx-auto px-6 py-16 grid md:grid-cols-4 gap-10">
+      {/* <div className="max-w-7xl mx-auto px-6 py-16 grid md:grid-cols-4 gap-10">
         <div>
-          <h3 className="text-white font-bold mb-4">Academix</h3>
+          <h3 className="text-white font-bold mb-4">LMS</h3>
           <p>
-            Premium LMS built for modern learners.
+            LMS built for modern learners.
           </p>
         </div>
 
@@ -34,10 +34,10 @@ const Footer = () => {
             <li>Phone: +880123456789</li>
           </ul>
         </div>
-      </div>
+      </div> */}
 
       <div className="border-t border-gray-800 text-center py-6 text-sm">
-        © {new Date().getFullYear()} Academix. All rights reserved.
+        © {new Date().getFullYear()} LMS. Built with ❤️ by Sayed.
       </div>
     </footer>
   );

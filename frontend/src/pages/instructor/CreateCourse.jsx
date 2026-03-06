@@ -49,31 +49,57 @@ export default function CreateCourse() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
+  try {
     const formData = new FormData();
-    Object.entries(form).forEach(([key, value]) => {
-      formData.append(key, value);
+    
+    // Required fields for CourseSerializer
+    formData.append("title", form.title);
+    formData.append("description", form.description);
+
+    // Category must be ID (integer)
+    if (form.category) {
+      formData.append("category", form.category);
+    }
+
+    // Thumbnail if selected
+    if (form.thumbnail) {
+      formData.append("thumbnail", form.thumbnail);
+    }
+
+    // Optional fields if your model has them
+    if (form.is_free) {
+      formData.append("is_free", form.is_free); // If serializer expects boolean
+      formData.append("price", 0); // Override price if free
+    } else {
+      formData.append("price", form.price);
+    }
+
+    // Status only if your serializer/model has it
+    if (form.status) {
+      formData.append("status", form.status);
+    }
+
+    const res = await API.post("/courses/courses/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
 
-    try {
-      const res = await API.post("/courses/courses/", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      toast.success("Course created successfully!");
-      navigate(`/dashboard/instructor/courses/${res.data.id}/modules`);
-    } catch (error) {
-      console.error(error);
-      const msg =
-        error.response?.data?.detail ||
-        "Failed to create course. Check your inputs.";
-      toast.error(msg);
-    } finally {
-      setLoading(false);
-    }
-  };
+    toast.success("Course created successfully!");
+    navigate(`/dashboard/instructor/courses/${res.data.id}/modules`);
+  } catch (error) {
+    console.error(error);
+    const msg =
+      error.response?.data ||
+      "Failed to create course. Check your inputs.";
+    toast.error(JSON.stringify(msg));
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">

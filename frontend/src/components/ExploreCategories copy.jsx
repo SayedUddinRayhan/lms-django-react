@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import API from "../api/apiClient";
 import { HiChevronRight, HiChevronLeft } from "react-icons/hi";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FaBook, FaLayerGroup } from "react-icons/fa";
-import { toast } from "react-toastify";
 
 export default function ExploreCategories() {
   const [categories, setCategories] = useState([]);
@@ -11,12 +10,9 @@ export default function ExploreCategories() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [loadingCourses, setLoadingCourses] = useState(false);
-  const [enrollingId, setEnrollingId] = useState(null);
 
   const scrollContainerRef = useRef(null);
-  const tabRefs = useRef([]);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const tabRefs = useRef([]); // store button refs for scrolling
 
   // Fetch categories on mount
   useEffect(() => {
@@ -26,6 +22,7 @@ export default function ExploreCategories() {
         const res = await API.get("courses/public/categories/");
         const data = res.data.results ?? res.data ?? [];
         if (!Array.isArray(data)) return;
+
         setCategories(data);
         if (data.length > 0) setActiveCategory(data[0].id);
       } catch (err) {
@@ -40,6 +37,7 @@ export default function ExploreCategories() {
   // Fetch courses whenever activeCategory changes
   useEffect(() => {
     if (!activeCategory) return;
+
     const fetchCourses = async () => {
       try {
         setLoadingCourses(true);
@@ -55,12 +53,14 @@ export default function ExploreCategories() {
         setLoadingCourses(false);
       }
     };
+
     fetchCourses();
   }, [activeCategory]);
 
-  // Handle tab click and scroll
+  // Handle tab click and scroll selected tab to center
   const handleCategoryClick = (id, index) => {
     setActiveCategory(id);
+
     const container = scrollContainerRef.current;
     const btn = tabRefs.current[index];
     if (container && btn) {
@@ -69,58 +69,12 @@ export default function ExploreCategories() {
     }
   };
 
+  // Scroll arrows
   const scrollLeft = () => {
     scrollContainerRef.current?.scrollBy({ left: -200, behavior: "smooth" });
   };
-
   const scrollRight = () => {
     scrollContainerRef.current?.scrollBy({ left: 200, behavior: "smooth" });
-  };
-
-  // Enroll handler
-  const handleEnroll = async (e, course) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    const token = localStorage.getItem("access");
-
-    // Not logged in → Save pending & redirect
-    if (!token) {
-      localStorage.setItem("pendingEnrollCourse", course.id);
-      toast.info("Please login to enroll");
-      navigate("/login", { state: { from: location.pathname } });
-      return;
-    }
-
-    // Logged in → Enroll directly
-    try {
-      setEnrollingId(course.id);
-
-      // Check if already enrolled (prevent duplicates)
-      const res = await API.get("courses/enrollments/", {
-        params: { course: course.id }
-      });
-      const results = res.data?.results || res.data || [];
-      const isAlreadyEnrolled = Array.isArray(results)
-        ? results.some(enr => enr.course == course.id)
-        : false;
-
-      if (isAlreadyEnrolled) {
-        toast.info("You're already enrolled in this course!");
-        return;
-      }
-
-      // Create new enrollment
-      await API.post("courses/enrollments/", { course: course.id });
-      toast.success("Successfully enrolled!");
-      navigate("/dashboard/student");
-
-    } catch (err) {
-      console.error("Enrollment error:", err);
-      toast.error(err.response?.data?.detail || "Enrollment failed.");
-    } finally {
-      setEnrollingId(null);
-    }
   };
 
   return (
@@ -136,8 +90,9 @@ export default function ExploreCategories() {
           </button>
         </div>
 
-        {/* Category Tabs */}
+        {/* Category Tabs with arrows */}
         <div className="relative mb-10">
+          {/* Left arrow */}
           <button
             onClick={scrollLeft}
             className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-white dark:bg-gray-800 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-700 transition"
@@ -172,6 +127,7 @@ export default function ExploreCategories() {
                 ))}
           </div>
 
+          {/* Right arrow */}
           <button
             onClick={scrollRight}
             className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-white dark:bg-gray-800 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-700 transition"
@@ -211,6 +167,7 @@ export default function ExploreCategories() {
                 key={course.id}
                 className="group bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700"
               >
+                {/* Thumbnail */}
                 <div className="relative">
                   <img
                     src={course.thumbnail || "/placeholder.jpg"}
@@ -224,15 +181,14 @@ export default function ExploreCategories() {
                   )}
                 </div>
 
-                <div className="p-5 space-y-2">
+                {/* Content */}
+               <div className="p-5 space-y-2">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-2 group-hover:text-indigo-600 transition">
                     {course.title}
                   </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{course.instructor_name}</p>
 
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {course.instructor_name}
-                  </p>
-
+                  {/* Only show total modules & lessons */}
                   <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mt-1">
                     <div className="flex items-center gap-1">
                       <FaLayerGroup /> {course.total_modules ?? 0} Modules
@@ -244,25 +200,10 @@ export default function ExploreCategories() {
 
                   <div className="flex items-center justify-between mt-2">
                     <span className="text-indigo-600 font-bold text-lg">
-                      {course.is_free
-                        ? "Free"
-                        : `৳ ${Number(course.price).toLocaleString()}`}
+                      {course.is_free ? "Free" : `৳ ${Number(course.price).toLocaleString()}`}
                     </span>
-
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleEnroll(e, course);
-                      }}
-                      disabled={enrollingId === course.id}
-                      className={`text-sm px-4 py-2 rounded-lg transition ${
-                        enrollingId === course.id
-                          ? "bg-indigo-400 cursor-not-allowed"
-                          : "bg-indigo-600 text-white hover:bg-indigo-700"
-                      }`}
-                    >
-                      {enrollingId === course.id ? "..." : "Enroll"}
+                    <button className="text-sm bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                      Enroll
                     </button>
                   </div>
                 </div>

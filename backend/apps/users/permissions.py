@@ -1,49 +1,56 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
+
 class RolePermission(BasePermission):
     """
-    View-level permission:
-    - Safe methods (GET, HEAD, OPTIONS) allowed for all.
-    - Admin: full access.
-    - Other roles: allowed_roles must be defined in the view.
+    View-level permission
     """
+
     def has_permission(self, request, view):
         user = request.user
+
         if not user or not user.is_authenticated:
             return False
 
-        # Safe methods are allowed for everyone
+        # Safe methods allowed
         if request.method in SAFE_METHODS:
             return True
 
-        # Admin: full access
-        if hasattr(user, "is_admin_role") and user.is_admin_role:
+        # Admin full access
+        if getattr(user, "is_admin_role", False):
             return True
 
-        # Allowed roles defined on the view
         allowed_roles = getattr(view, "allowed_roles", [])
         return user.role in allowed_roles
 
 
 class IsOwnerOrAdmin(BasePermission):
     """
-    Object-level permission:
-    - Admin can modify any object.
-    - Instructor can modify objects where obj.instructor == request.user
-    - Student can modify objects where obj.student == request.user
+    Object-level permission
     """
+
     def has_object_permission(self, request, view, obj):
         user = request.user
 
-        # Admin can do anything
-        if hasattr(user, "is_admin_role") and user.is_admin_role:
+        # Admin full access
+        if getattr(user, "is_admin_role", False):
             return True
 
-        # Instructor modifies own courses/modules/lessons
+        # Course ownership
         if hasattr(obj, "instructor") and obj.instructor == user:
             return True
 
-        # Student modifies own enrollments/progress
+        # Module ownership
+        if hasattr(obj, "course") and hasattr(obj.course, "instructor"):
+            if obj.course.instructor == user:
+                return True
+
+        # Lesson ownership
+        if hasattr(obj, "module") and hasattr(obj.module, "course"):
+            if obj.module.course.instructor == user:
+                return True
+
+        # Student ownership
         if hasattr(obj, "student") and obj.student == user:
             return True
 

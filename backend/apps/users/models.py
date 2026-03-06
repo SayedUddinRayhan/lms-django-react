@@ -14,7 +14,7 @@ class User(AbstractUser):
 
     
     phone = models.CharField(max_length=20, unique=True, null=True, blank=True)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="", blank=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=STUDENT)
 
     class Meta:
         ordering = ["-date_joined"]

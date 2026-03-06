@@ -2,62 +2,21 @@
 import { useState } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import { FaSpinner } from "react-icons/fa";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import API from "../../api/apiClient";
+import { Link } from "react-router-dom";
 
 const Login = () => {
-  const { login, authError, isAuthLoading } = useAuth(); // ✅ No isAuthenticated needed
-  const [identifier, setIdentifier] = useState("");
+  const { login, authError, isAuthLoading } = useAuth();
+  const [identifier, setIdentifier] = useState(""); // Email OR Phone
   const [password, setPassword] = useState("");
-  
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // ✅ 1. Perform login first
+      // ✅ Pass as { identifier, password } - AuthContext handles the rest
       await login({ identifier, password });
-      
-      // ✅ 2. AFTER login succeeds → process pending enrollment
-      const pendingCourseId = localStorage.getItem("pendingEnrollCourse");
-      
-      if (pendingCourseId) {
-        console.log("🔄 Processing pending enrollment:", pendingCourseId);
-        
-        try {
-          // Check if already enrolled
-          const getRes = await API.get("courses/enrollments/", {
-            params: { course: pendingCourseId }
-          });
-          const results = getRes.data?.results || getRes.data || [];
-          const isAlreadyEnrolled = Array.isArray(results)
-            ? results.some(enr => enr.course == pendingCourseId)
-            : false;
-
-          if (isAlreadyEnrolled) {
-            alert("You're already enrolled in this course!");
-          } else {
-            // Create enrollment
-            await API.post("courses/enrollments/", { course: pendingCourseId });
-            alert("Enrolled successfully!");
-          }
-        } catch (err) {
-          console.error("Auto-enroll error:", err);
-          alert(err.response?.data?.detail || "Could not complete enrollment.");
-        } finally {
-          // ✅ Always clean up pending course
-          localStorage.removeItem("pendingEnrollCourse");
-        }
-      }
-      
-      // ✅ 3. Redirect to original destination or dashboard
-      const from = location.state?.from || "/dashboard/student";
-      navigate(from, { replace: true });
-      
+      // ✅ No redirect here - AuthContext useEffect handles it
     } catch (err) {
       console.error("Login error:", err);
-      // AuthError is already handled by AuthContext
     }
   };
 

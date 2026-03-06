@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
     
     if (role === "student") {
       if (window.location.pathname === "/login") {
-        navigate("/dashboard/my-courses", { replace: true });
+        navigate("/dashboard/student", { replace: true });
       }
     } else if (role === "instructor") {
       if (window.location.pathname === "/login") {

@@ -41,8 +41,8 @@ class LessonSerializer(serializers.ModelSerializer):
     def validate(self, data):
         content_type = data.get("content_type") or getattr(self.instance, "content_type", None)
 
-        if content_type == "video" and not data.get("video_url"):
-            raise serializers.ValidationError({"video_url": "Video URL required."})
+        if content_type == "video" and not (data.get("video_url") or data.get("file")):
+            raise serializers.ValidationError({"video_url": "Either video URL or file must be set for a video lesson."})
 
         if content_type == "article" and not data.get("content"):
             raise serializers.ValidationError({"content": "Article content required."})
@@ -109,7 +109,29 @@ class EnrollmentSerializer(serializers.ModelSerializer):
         return name if name else obj.student.username
 
 
+class PublicCourseSerializer(serializers.ModelSerializer):
+    instructor = serializers.StringRelatedField()
+    category = serializers.StringRelatedField()
+    total_modules = serializers.IntegerField(read_only=True)
+    total_lessons = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Course
+        fields = [
+            "id",
+            "slug",
+            "title",
+            "thumbnail",
+            "price",
+            "category",
+            "instructor",
+            "total_modules",
+            "total_lessons",
+            "created_at",
+        ]
+
 class CourseSerializer(serializers.ModelSerializer):
+    total_modules = serializers.IntegerField(read_only=True)
     total_lessons = serializers.IntegerField(read_only=True)
     total_students = serializers.IntegerField(read_only=True)
 
@@ -129,13 +151,13 @@ class CourseSerializer(serializers.ModelSerializer):
             "price", "is_free",
             "status", "is_active",
             "created_at", "updated_at",
-            "total_lessons", "total_students",
+            "total_modules", "total_lessons", "total_students",
             "modules"
         ]
 
         read_only_fields = [
             "slug", "created_at", "updated_at",
-            "total_lessons", "total_students"
+            "total_modules", "total_lessons", "total_students"
         ]
 
     def get_instructor_name(self, obj):
@@ -148,3 +170,49 @@ class CourseSerializer(serializers.ModelSerializer):
         if obj.thumbnail:
             return request.build_absolute_uri(obj.thumbnail.url)
         return None
+
+
+class PublicLessonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lesson
+        fields = [
+            "id",
+            "title",
+            "content_type",
+            "duration_minutes",
+        ]
+
+class PublicModuleSerializer(serializers.ModelSerializer):
+    lessons = PublicLessonSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Module
+        fields = ["id", "title", "lessons"]
+
+class PublicCourseSerializer(serializers.ModelSerializer):
+    instructor_name = serializers.CharField(source="instructor.get_full_name", read_only=True)
+    modules = PublicModuleSerializer(many=True, read_only=True)
+    total_modules = serializers.SerializerMethodField()
+    total_lessons = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Course
+        fields = [
+            "id",
+            "title",
+            "slug",
+            "description",
+            "thumbnail",
+            "price",
+            "is_free",
+            "instructor_name",
+            "total_modules",
+            "total_lessons",
+            "modules",
+        ]
+
+    def get_total_modules(self, obj):
+        return obj.modules.filter(is_active=True).count()
+
+    def get_total_lessons(self, obj):
+        return Lesson.objects.filter(module__course=obj, is_active=True).count()
