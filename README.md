@@ -14,39 +14,48 @@
 ## ✨ Features
 
 ### 🔐 Authentication & Roles
-- JWT-based secure login, registration, and password management
+- **Flexible Login**: Sign in with **email OR phone number** 📱✉️
+- JWT-based secure authentication, registration, and password management
 - **Role-Based Access Control**:
   - **Admin**: Full system control, user management, analytics
-  - **Instructor**: Create/edit courses, manage enrollments, grade assignments
-  - **Student**: Enroll in courses, access lessons, submit assignments, track progress
+  - **Instructor**: Create/edit courses, manage modules and lessons
+  - **Student**: Enroll in courses, access lessons, track progress
 
 ### 📚 Course Management
 - Create, edit, and organize courses with modules, lessons, and resources
-- Support for video, text, PDF, and quiz content types
-- Rich text editor for course content (TinyMCE/Quill)
+- Support for video and text content types
 
 ### 📊 Learning & Progress
 - Visual progress tracking with completion percentages
-- Achievement badges and certificates upon course completion
-- Assignment submissions with instructor feedback
-- Auto-graded quizzes and manual grading options
 
-### 💬 Engagement
-- Course-specific discussion forums and Q&A
-- Real-time notifications for deadlines, grades, and announcements
-- Comment system on lessons and assignments
+### 💬 User Feedback & Notifications
+- Real-time toast notifications for actions (success, error, warning, info) using **React Hot Toast** 🍞
 
 ### 🎨 UI/UX
 - Fully responsive design powered by **Tailwind CSS**
 - Dark/Light mode toggle
 - Intuitive dashboard tailored to each user role
-- Search and filter courses by title, category, instructor, or tags
+
 
 ### ⚙️ Developer Features
 - RESTful API with Django REST Framework
-- Swagger/OpenAPI documentation
 - CORS configured for seamless frontend-backend communication
-- Environment-based configuration for dev/staging/prod
+- Environment-based configuration for dev/prod
+
+---
+
+## 🎮 Quick Start – Demo Accounts
+
+> ⚠️ **For testing only** 
+
+| Role | Email / Phone | Password | Access |
+|------|--------------|----------|--------|
+| **Student** | `student@gmail.com` | `test@123` | Enroll, view courses, track progress |
+| **Instructor** | `instructor@gmail.com` | `test@123` | Create courses, manage modules & lessons |
+
+
+🔹 **Login with either email OR phone number** – both are supported!  
+🔹 Visit: [http://localhost:5173/login](http://localhost:5173/login)
 
 ---
 
@@ -56,7 +65,6 @@
 |-----------|-------------|---------------|------------------|
 | ![Dashboard](screenshots/dashboard.png) | ![Courses](screenshots/courses.png) | ![Course Detail](screenshots/course-detail.png) | ![Progress](screenshots/progress.png) |
 
-> 💡 *Add your actual screenshots to the `screenshots/` folder and update the paths above.*
 
 ---
 
@@ -65,8 +73,8 @@
 | Role | Access Features |
 |------|----------------|
 | **Admin** | Manage all users, courses, site settings; view system-wide analytics; configure platform settings |
-| **Instructor** | Create/edit own courses; manage enrollments; grade submissions; view course-specific analytics |
-| **Student** | Enroll in courses; access enrolled content; submit assignments; participate in discussions; track personal progress |
+| **Instructor** | Create/edit own courses; manage modules & lessons; view enrolled students |
+| **Student** | Enroll in courses; access enrolled content; track personal progress; receive notifications |
 
 ---
 
@@ -75,24 +83,17 @@
 ### Backend
 - **Python 3.10+**, **Django 4.2+**, **Django REST Framework**
 - **Database**: PostgreSQL (production) / SQLite (development)
-- **Authentication**: JWT (djangorestframework-simplejwt)
-- **Permissions**: Django Guardian for object-level permissions
-- **Email**: SendGrid / SMTP for password reset & notifications
-- **Task Queue**: Celery + Redis (optional, for async emails)
+- **Authentication**: JWT (`djangorestframework-simplejwt`) + Custom Phone/Email Backend
+- **Permissions**: Role-based using Django Groups and Permissions
 
 ### Frontend
-- **React 18+** with Vite bundler
+- **React 18+** with Vite
 - **Tailwind CSS** for utility-first, responsive styling
 - **React Router v6** for client-side routing
 - **Axios** for API HTTP requests
 - **React Hook Form** + **Zod** for form handling & validation
 - **Recharts** for dashboard analytics visualization
-
-### DevOps & Tooling
-- **Docker** & **Docker Compose** (optional)
-- **ESLint** + **Prettier** (frontend), **Black** + **Flake8** (backend)
-- **GitHub Actions** for CI/CD pipeline
-- **pre-commit hooks** for code quality
+- **React Hot Toast** for elegant, non-intrusive user notifications
 
 ---
 
@@ -100,8 +101,7 @@
 
 ### Prerequisites
 - Python 3.10+
-- Node.js 18+ & npm/yarn/pnpm
-- PostgreSQL (recommended for production)
+- Node.js 18+ & npm/yarn
 
 ### Step 1: Clone the Repository
 ```bash
