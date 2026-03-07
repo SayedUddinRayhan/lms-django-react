@@ -4,7 +4,7 @@ import { FaSpinner } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import API from "../../api/apiClient";
 
-const Login = () => {
+const LoginPage = () => {
   const { login, authError, isAuthLoading } = useAuth(); 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -114,4 +114,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;

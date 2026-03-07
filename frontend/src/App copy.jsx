@@ -9,7 +9,7 @@ import Home from "./pages/public/Home";
 import ExploreCategories from "./components/ExploreCategories";
 import FeaturedCourses from "./components/FeaturedCourses";
 import CourseDetails from "./pages/public/CourseDetails";
-import Login from "./pages/auth/Login";
+import Login from "./pages/auth/LoginPage";
 import Register from "./pages/auth/Register";
 
 // Protected Pages

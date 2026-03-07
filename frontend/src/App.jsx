@@ -10,7 +10,7 @@ import FeaturedCourses from "./components/FeaturedCourses";
 import CourseDetails from "./pages/public/CourseDetails";
 
 // Auth Pages
-import Login from "./pages/auth/Login";
+import LoginPage from "./pages/auth/LoginPage";
 import Register from "./pages/auth/Register";
 
 // Dashboard Pages
@@ -42,7 +42,7 @@ function App() {
 
       {/* Auth Pages */}
       <Route element={<AuthLayout />}>
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />
       </Route>
 
