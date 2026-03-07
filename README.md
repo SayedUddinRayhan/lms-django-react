@@ -4,7 +4,7 @@
 [![Django](https://img.shields.io/badge/Django-green?logo=django&logoColor=white)](https://www.djangoproject.com/)
 [![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?logo=vercel)](http://localhost:5173/)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?logo=vercel)](https://lms-django-react.vercel.app/)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-black?logo=github&logoColor=white)](https://github.com/SayedUddinRayhan/lms-django-react)
 
 **LMS Platform** is a modern, full-stack Learning Management System built with **Django REST Framework** (backend), **React** (frontend), and **Tailwind CSS** (styling). It enables instructors to create courses, manage students, and track progress, while learners can enroll, access content, and interact with course materials—all through a responsive, intuitive interface.
