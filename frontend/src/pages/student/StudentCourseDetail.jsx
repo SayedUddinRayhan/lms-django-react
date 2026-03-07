@@ -1,4 +1,3 @@
-// src/pages/student/StudentCourseDetail.jsx
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import API from "../../api/apiClient";
@@ -70,9 +69,9 @@ export default function StudentCourseDetail() {
     if (!lesson || lesson.is_completed) return;
 
     try {
-      // Update lesson completion in API
+  
       await API.post(`/courses/student/lessons/${lesson.id}/complete/`);
-      // Update local state
+      
       setCourse((prev) => {
         const updated = { ...prev };
         for (let module of updated.modules) {

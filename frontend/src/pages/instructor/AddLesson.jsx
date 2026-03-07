@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { FaSave } from "react-icons/fa";
 
 export default function AddLesson() {
-  const { courseId, moduleId } = useParams(); // route: /courses/:courseId/modules/:moduleId/add-lesson
+  const { courseId, moduleId } = useParams(); 
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -27,7 +27,7 @@ export default function AddLesson() {
 
     try {
       await API.post("/courses/lessons/", { ...form, module: moduleId });
-      toast.success("✅ Lesson added successfully!");
+      toast.success("Lesson added successfully!");
       navigate(
         `/dashboard/instructor/courses/${courseId}/modules/${moduleId}`
       );

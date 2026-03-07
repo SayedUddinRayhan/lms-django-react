@@ -1,4 +1,3 @@
-// src/App.jsx
 import { Routes, Route } from "react-router-dom";
 import PublicLayout from "./layouts/PublicLayout";
 import AuthLayout from "./layouts/AuthLayout";
@@ -20,10 +19,10 @@ import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentCourseDetail from "./pages/student/StudentCourseDetail";
 import InstructorDashboard from "./pages/instructor/InstructorDashboard";
 import CreateCourse from "./pages/instructor/CreateCourse";
-import ModuleList from "./pages/instructor/ModuleList"; // manage modules
+import ModuleList from "./pages/instructor/ModuleList"; 
 import AddModule from "./pages/instructor/AddModule";
 import EditModule from "./pages/instructor/EditModule";
-import LessonList from "./pages/instructor/LessonList"; // manage lessons
+import LessonList from "./pages/instructor/LessonList"; 
 import AddLesson from "./pages/instructor/AddLesson";
 import EditLesson from "./pages/instructor/EditLesson";
 

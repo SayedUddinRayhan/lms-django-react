@@ -1,5 +1,3 @@
-// src/pages/instructor/MyCourses.jsx
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../../api/apiClient";

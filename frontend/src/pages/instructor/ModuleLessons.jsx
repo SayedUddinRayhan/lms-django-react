@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { FaPlus, FaEdit } from "react-icons/fa";
 
 export default function ModuleLessons() {
-  const { courseId, moduleId } = useParams(); // route: /courses/:courseId/modules/:moduleId
+  const { courseId, moduleId } = useParams();
   const navigate = useNavigate();
   const [module, setModule] = useState(null);
   const [lessons, setLessons] = useState([]);
@@ -14,11 +14,9 @@ export default function ModuleLessons() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch module info
         const resModule = await API.get(`/courses/modules/${moduleId}/`);
         setModule(resModule.data);
-
-        // Fetch lessons for this module
+        
         const resLessons = await API.get(`/courses/lessons/?module=${moduleId}`);
         setLessons(resLessons.data.results ?? resLessons.data ?? []);
       } catch (error) {

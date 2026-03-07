@@ -6,11 +6,10 @@ from django.contrib.auth import authenticate
 
 User = get_user_model()
 
-# users/serializers.py - RegisterSerializer
-# users/serializers.py
+
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
-    password2 = serializers.CharField(write_only=True, required=True)  # ✅ Add confirm field
+    password2 = serializers.CharField(write_only=True, required=True) 
 
     class Meta:
         model = User
@@ -21,16 +20,16 @@ class RegisterSerializer(serializers.ModelSerializer):
         }
 
     def validate(self, attrs):
-        # ✅ Server-side password match check
+      
         if attrs["password"] != attrs["password2"]:
             raise serializers.ValidationError({"password2": "Passwords do not match"})
         return attrs
 
     def create(self, validated_data):
-        # ✅ Remove password2 before creating user
+  
         validated_data.pop("password2")
         
-        # ✅ Default to empty role if not provided
+    
         if "role" not in validated_data or not validated_data["role"]:
             validated_data["role"] = ""
             

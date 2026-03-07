@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { FaSave } from "react-icons/fa";
 
 export default function EditLesson() {
-  const { courseId, moduleId, lessonId } = useParams(); // route: /courses/:courseId/modules/:moduleId/lessons/:lessonId/edit
+  const { courseId, moduleId, lessonId } = useParams(); 
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -48,7 +48,7 @@ export default function EditLesson() {
 
     try {
       await API.put(`/courses/lessons/${lessonId}/`, form);
-      toast.success("✅ Lesson updated successfully!");
+      toast.success("Lesson updated successfully!");
       navigate(`/dashboard/instructor/courses/${courseId}/modules/${moduleId}`);
     } catch (error) {
       console.error(error);

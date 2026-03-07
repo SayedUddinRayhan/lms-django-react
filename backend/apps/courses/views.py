@@ -50,7 +50,7 @@ class PublicCourseDetailView(generics.RetrieveAPIView):
     lookup_field = "slug"
 
     def get_queryset(self):
-        # Prefetch active modules and active lessons
+       
         return Course.objects.filter(is_active=True) \
             .select_related("instructor", "category") \
             .prefetch_related(
@@ -274,10 +274,8 @@ class StudentDashboardView(APIView):
         if not user.is_student_role:
             return Response({"detail": "Only students allowed"}, status=403)
 
-        # Enrollments for this student
         enrollments = Enrollment.objects.filter(student=user).select_related("course")
 
-        # Stats
         total_courses = enrollments.count()
         total_lessons_completed = LessonProgress.objects.filter(
             student=user, is_completed=True
@@ -288,17 +286,16 @@ class StudentDashboardView(APIView):
             watched_seconds=Sum("watched_seconds")
         )["watched_seconds"] or 0
 
-        # Courses student enrolled in, annotated with all needed counts
         courses = Course.objects.filter(
             enrollments__student=user
         ).annotate(
             total_modules=Count("modules", distinct=True),
             total_lessons=Count("modules__lessons", distinct=True),
-            total_students=Count("enrollments", distinct=True),  # <--- Fix here
+            total_students=Count("enrollments", distinct=True), 
         ).distinct().select_related("category", "instructor") \
          .prefetch_related("modules")
 
-        # Recent courses (latest enrolled first)
+       
         recent_courses = courses.order_by("-enrollments__enrolled_at")[:5]
 
         serializer = CourseSerializer(recent_courses, many=True, context={"request": request})
@@ -322,32 +319,32 @@ class StudentCourseDetailView(APIView):
         if not user.is_student_role:
             return Response({"detail": "Only students allowed"}, status=403)
 
-        # Check enrollment
+    
         if not Enrollment.objects.filter(student=user, course_id=course_id).exists():
             return Response({"detail": "You are not enrolled in this course."}, status=403)
 
-        # Prefetch lessons with student's progress
+      
         lessons_qs = Lesson.objects.filter(is_active=True).prefetch_related(
             Prefetch(
-                "progress_records",  # related_name in LessonProgress
+                "progress_records", 
                 queryset=LessonProgress.objects.filter(student=user),
                 to_attr="student_progress"
             )
         )
 
-        # Prefetch modules with lessons
+    
         modules_qs = Module.objects.filter(course_id=course_id, is_active=True).prefetch_related(
             Prefetch("lessons", queryset=lessons_qs)
         )
 
-        # Get course with modules
+      
         course = get_object_or_404(
             Course.objects.filter(id=course_id, is_active=True).prefetch_related(
                 Prefetch("modules", queryset=modules_qs)
             )
         )
 
-        # Build response
+   
         course_data = {
             "id": course.id,
             "title": course.title,
@@ -360,13 +357,13 @@ class StudentCourseDetailView(APIView):
             module_data = {"id": module.id, "title": module.title, "lessons": []}
             for lesson in module.lessons.all():
                 progress = lesson.student_progress[0] if hasattr(lesson, "student_progress") and lesson.student_progress else None
-                # Build file URL if exists
+              
                 file_url = request.build_absolute_uri(lesson.file.url) if lesson.file else None
                 module_data["lessons"].append({
                     "id": lesson.id,
                     "title": lesson.title,
                     "video_url": lesson.video_url,
-                    "file": file_url,  # <-- include file URL here
+                    "file": file_url, 
                     "content_type": lesson.content_type,
                     "is_completed": progress.is_completed if progress else False
                 })

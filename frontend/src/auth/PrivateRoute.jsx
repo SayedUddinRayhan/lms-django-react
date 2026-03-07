@@ -22,7 +22,6 @@ export default function PrivateRoute({ children, allowedRoles = [] }) {
 
   if (!user) return <Navigate to="/login" state={{ from: location }} replace />;
 
-  // Redirect logged-in users away from login/register
   if (location.pathname.startsWith("/login") || location.pathname.startsWith("/register")) {
     return <Navigate to={getDashboard(user.role)} replace />;
   }

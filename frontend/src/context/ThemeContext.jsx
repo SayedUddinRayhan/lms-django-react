@@ -1,4 +1,3 @@
-// src/context/ThemeContext.jsx
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 const ThemeContext = createContext();
@@ -6,7 +5,6 @@ const ThemeContext = createContext();
 export const ThemeProvider = ({ children }) => {
   const [dark, setDark] = useState(false);
 
-  // Initialize theme on mount
   useEffect(() => {
     const saved = localStorage.getItem("theme");
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;

@@ -55,29 +55,28 @@ export default function CreateCourse() {
   try {
     const formData = new FormData();
     
-    // Required fields for CourseSerializer
+
     formData.append("title", form.title);
     formData.append("description", form.description);
 
-    // Category must be ID (integer)
     if (form.category) {
       formData.append("category", form.category);
     }
 
-    // Thumbnail if selected
+
     if (form.thumbnail) {
       formData.append("thumbnail", form.thumbnail);
     }
 
-    // Optional fields if your model has them
+
     if (form.is_free) {
-      formData.append("is_free", form.is_free); // If serializer expects boolean
-      formData.append("price", 0); // Override price if free
+      formData.append("is_free", form.is_free); 
+      formData.append("price", 0); 
     } else {
       formData.append("price", form.price);
     }
 
-    // Status only if your serializer/model has it
+   
     if (form.status) {
       formData.append("status", form.status);
     }

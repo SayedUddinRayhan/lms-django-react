@@ -5,17 +5,17 @@ import DashboardNavbar from "../components/dashboard/DashboardNavbar";
 const DashboardLayout = ({ children }) => {
   const [isOpen, setIsOpen] = useState(true);
 
-  // Auto collapse on mobile
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 1024) {
-        setIsOpen(false); // collapsed (icon only)
+        setIsOpen(false);
       } else {
-        setIsOpen(true); // expanded
+        setIsOpen(true);
       }
     };
 
-    handleResize(); // run once
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);

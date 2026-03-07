@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { FaSave } from "react-icons/fa";
 
 export default function EditModule() {
-  const { moduleId } = useParams(); // expecting route: /modules/:moduleId/edit
+  const { moduleId } = useParams(); 
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -16,7 +16,7 @@ export default function EditModule() {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
 
-  // Fetch module details
+ 
   useEffect(() => {
     const fetchModule = async () => {
       try {
@@ -47,8 +47,8 @@ export default function EditModule() {
 
     try {
       await API.put(`/courses/modules/${moduleId}/`, form);
-      toast.success("✅ Module updated successfully!");
-      navigate(-1); // Go back to previous page
+      toast.success("Module updated successfully!");
+      navigate(-1);
     } catch (error) {
       console.error(error);
       const msg =

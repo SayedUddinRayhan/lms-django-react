@@ -16,7 +16,7 @@ export default function FeaturedCourses() {
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
-  // Fetch courses on mount
+  
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -34,7 +34,7 @@ export default function FeaturedCourses() {
     fetchCourses();
   }, []);
 
-  // Carousel scroll
+ 
   const scroll = (direction) => {
     if (carouselRef.current) {
       const scrollAmount = 320;
@@ -45,7 +45,6 @@ export default function FeaturedCourses() {
     }
   };
 
-  // Touch handlers
   const handleTouchStart = (e) => (touchStartX.current = e.touches[0].clientX);
   const handleTouchMove = (e) => (touchEndX.current = e.touches[0].clientX);
   const handleTouchEnd = () => {
@@ -53,20 +52,20 @@ export default function FeaturedCourses() {
     if (touchStartX.current - touchEndX.current < -50) scroll("left");
   };
 
-  // Auto-scroll
+
   useEffect(() => {
     const interval = setInterval(() => scroll("right"), 4000);
     return () => clearInterval(interval);
   }, []);
 
-  // Enroll handler
+
   const handleEnroll = async (e, course) => {
     e.preventDefault();
     e.stopPropagation();
 
     const token = localStorage.getItem("access");
 
-    // Not logged in → Save & redirect
+
     if (!token) {
       localStorage.setItem("pendingEnrollCourse", course.id);
       toast.info("Please login to enroll");
@@ -74,11 +73,9 @@ export default function FeaturedCourses() {
       return;
     }
 
-    // Logged in → Enroll directly
     try {
       setEnrollingId(course.id);
 
-      // Check if already enrolled
       const res = await API.get("courses/enrollments/", {
         params: { course: course.id }
       });

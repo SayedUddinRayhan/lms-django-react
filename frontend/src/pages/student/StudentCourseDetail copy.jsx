@@ -1,4 +1,3 @@
-// src/pages/student/StudentCourseDetail.jsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import API from "../../api/apiClient";
@@ -11,18 +10,17 @@ export default function StudentCourseDetail() {
   const [loading, setLoading] = useState(true);
   const [currentLesson, setCurrentLesson] = useState(null);
 
-  // Helper: return playable URL for ReactPlayer
+ 
   const getVideoSource = (lesson) => {
   if (!lesson) return null;
 
-  // 1️⃣ YouTube / Vimeo / other ReactPlayer supported URLs
   if (lesson.video_url && ReactPlayer.canPlay(lesson.video_url)) {
     return lesson.video_url;
   }
 
-  // 2️⃣ Local uploaded file (assume API returns absolute URL)
+ 
   if (lesson.file) {
-    return lesson.file; // Use as is, no base URL prepending
+    return lesson.file; 
   }
 
   return null;
@@ -113,7 +111,7 @@ export default function StudentCourseDetail() {
                   {lesson.is_completed && (
                     <FaCheckCircle className="inline text-green-500" />
                   )}
-                  {/* Icon based on content type */}
+                  
                   {lesson.content_type === "video" && <FaFileVideo className="inline text-gray-400" />}
                   {lesson.content_type === "article" && <FaFileAlt className="inline text-gray-400" />}
                 </span>

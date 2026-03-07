@@ -6,7 +6,7 @@ import { FaSave } from "react-icons/fa";
 
 export default function AddModule() {
   const navigate = useNavigate();
-  const { courseId } = useParams(); // expecting route: /courses/:courseId/modules/add
+  const { courseId } = useParams();
 
   const [form, setForm] = useState({
     title: "",
@@ -29,9 +29,9 @@ export default function AddModule() {
 
       const res = await API.post("/courses/modules/", payload);
 
-      toast.success("🎉 Module added successfully!");
+      toast.success("Module added successfully!");
 
-      // Redirect to module list for this course
+
       navigate(`/dashboard/instructor/courses/${courseId}/modules`);
     } catch (error) {
       console.error(error);

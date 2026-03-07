@@ -54,7 +54,6 @@ export default function CourseDetails() {
     }));
   };
 
-  /* ---------------- Loading ---------------- */
 
   if (loading) {
     return (
@@ -64,7 +63,7 @@ export default function CourseDetails() {
     );
   }
 
-  /* ---------------- Error ---------------- */
+
 
   if (error || !course) {
     return (
@@ -76,12 +75,11 @@ export default function CourseDetails() {
     );
   }
 
-  /* ---------------- Page ---------------- */
+
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-16">
 
-      {/* ================= HEADER ================= */}
 
       <div className="grid md:grid-cols-2 gap-10">
 
@@ -132,7 +130,7 @@ export default function CourseDetails() {
         </div>
       </div>
 
-      {/* ================= CURRICULUM ================= */}
+
 
       <div className="mt-16">
 

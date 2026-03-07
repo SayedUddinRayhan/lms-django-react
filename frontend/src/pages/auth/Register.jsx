@@ -1,4 +1,3 @@
-// src/pages/auth/Register.jsx
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../../api/apiClient";
@@ -50,27 +49,26 @@ const Register = () => {
       
     } catch (err) {
       console.error("Registration error:", err);
-      
-      // ✅ Robust error handling: detect HTML vs JSON
+     
       if (err.response?.data) {
         const responseData = err.response.data;
         
-        // 🚨 Django debug page or other HTML response
+  
         if (typeof responseData === 'string' && responseData.trim().startsWith('<')) {
           if (responseData.includes('DEBUG = True')) {
             setError("Server error. Check Django terminal for details.");
-            console.warn("⚠️ Django returned HTML debug page. See backend logs below:");
-            console.warn("🔍 Look for: ValidationError, IntegrityError, or field issues");
+            console.warn("Django returned HTML debug page. See backend logs below:");
+            console.warn("Look for: ValidationError, IntegrityError, or field issues");
           } else {
             setError("Unexpected server response. Check console for details.");
           }
         } 
-        // ✅ Proper JSON error from DRF
+       
         else if (typeof responseData === 'object') {
           const errorMessages = Object.entries(responseData)
             .map(([field, messages]) => {
               const msg = Array.isArray(messages) ? messages.join(", ") : messages;
-              // Friendly field names
+        
               const fieldName = field === 'password2' ? 'Confirm password' : 
                                field === 'username' ? 'Username' :
                                field === 'email' ? 'Email' : field;
@@ -79,7 +77,7 @@ const Register = () => {
             .join("\n");
           setError(errorMessages || "Registration failed");
         } 
-        // 📝 Fallback for string errors
+        
         else {
           setError(String(responseData) || "Registration failed");
         }
@@ -94,7 +92,6 @@ const Register = () => {
   };
 
   return (
-    // ... (your JSX remains unchanged)
     <div className="w-full max-w-sm max-h-auto bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-8 transition mt-25 mb-10">
       <h2 className="text-3xl font-bold text-center mb-6 text-gray-900 dark:text-gray-100">
         Create Account
@@ -106,7 +103,7 @@ const Register = () => {
         </div>
       )}
 
-      {/* ... rest of your form JSX ... */}
+  
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Username */}
         <div>

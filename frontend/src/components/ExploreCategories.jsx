@@ -18,7 +18,6 @@ export default function ExploreCategories() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Fetch categories on mount
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -37,7 +36,6 @@ export default function ExploreCategories() {
     fetchCategories();
   }, []);
 
-  // Fetch courses whenever activeCategory changes
   useEffect(() => {
     if (!activeCategory) return;
     const fetchCourses = async () => {
@@ -58,7 +56,7 @@ export default function ExploreCategories() {
     fetchCourses();
   }, [activeCategory]);
 
-  // Handle tab click and scroll
+
   const handleCategoryClick = (id, index) => {
     setActiveCategory(id);
     const container = scrollContainerRef.current;
@@ -77,14 +75,13 @@ export default function ExploreCategories() {
     scrollContainerRef.current?.scrollBy({ left: 200, behavior: "smooth" });
   };
 
-  // Enroll handler
+ 
   const handleEnroll = async (e, course) => {
     e.preventDefault();
     e.stopPropagation();
 
     const token = localStorage.getItem("access");
 
-    // Not logged in → Save pending & redirect
     if (!token) {
       localStorage.setItem("pendingEnrollCourse", course.id);
       toast.info("Please login to enroll");
@@ -92,11 +89,9 @@ export default function ExploreCategories() {
       return;
     }
 
-    // Logged in → Enroll directly
     try {
       setEnrollingId(course.id);
 
-      // Check if already enrolled (prevent duplicates)
       const res = await API.get("courses/enrollments/", {
         params: { course: course.id }
       });
@@ -110,7 +105,7 @@ export default function ExploreCategories() {
         return;
       }
 
-      // Create new enrollment
+   
       await API.post("courses/enrollments/", { course: course.id });
       toast.success("Successfully enrolled!");
       navigate("/dashboard/student");

@@ -1,4 +1,3 @@
-// src/pages/auth/Login.jsx
 import { useState } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import { FaSpinner } from "react-icons/fa";
@@ -6,7 +5,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import API from "../../api/apiClient";
 
 const Login = () => {
-  const { login, authError, isAuthLoading } = useAuth(); // ✅ No isAuthenticated needed
+  const { login, authError, isAuthLoading } = useAuth(); 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   
@@ -16,17 +15,16 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // ✅ 1. Perform login first
+      
       await login({ identifier, password });
       
-      // ✅ 2. AFTER login succeeds → process pending enrollment
       const pendingCourseId = localStorage.getItem("pendingEnrollCourse");
       
       if (pendingCourseId) {
         console.log("🔄 Processing pending enrollment:", pendingCourseId);
         
         try {
-          // Check if already enrolled
+      
           const getRes = await API.get("courses/enrollments/", {
             params: { course: pendingCourseId }
           });
@@ -38,7 +36,7 @@ const Login = () => {
           if (isAlreadyEnrolled) {
             alert("You're already enrolled in this course!");
           } else {
-            // Create enrollment
+     
             await API.post("courses/enrollments/", { course: pendingCourseId });
             alert("Enrolled successfully!");
           }
@@ -46,18 +44,17 @@ const Login = () => {
           console.error("Auto-enroll error:", err);
           alert(err.response?.data?.detail || "Could not complete enrollment.");
         } finally {
-          // ✅ Always clean up pending course
+     
           localStorage.removeItem("pendingEnrollCourse");
         }
       }
       
-      // ✅ 3. Redirect to original destination or dashboard
       const from = location.state?.from || "/dashboard/student";
       navigate(from, { replace: true });
       
     } catch (err) {
       console.error("Login error:", err);
-      // AuthError is already handled by AuthContext
+  
     }
   };
 

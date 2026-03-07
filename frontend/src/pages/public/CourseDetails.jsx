@@ -68,8 +68,6 @@ export default function CourseDetails() {
   return (
     <div className="max-w-6xl mx-auto px-6 py-16">
 
-      {/* ================= HEADER ================= */}
-
       <div className="grid md:grid-cols-2 gap-10">
 
         <img
@@ -114,7 +112,7 @@ export default function CourseDetails() {
         </div>
       </div>
 
-      {/* ================= CURRICULUM ================= */}
+      {/* CURRICULUM */}
 
       <div className="mt-16">
         <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">

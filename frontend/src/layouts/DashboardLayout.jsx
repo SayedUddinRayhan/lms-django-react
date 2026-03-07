@@ -8,11 +8,11 @@ import { useAuth } from "../auth/AuthContext";
 import { Outlet } from "react-router-dom";
 
 function DashboardLayout() {
-  const { user } = useAuth(); // get logged-in user
-  const [sidebarOpen, setSidebarOpen] = useState(false); // mobile sidebar
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false); // desktop collapse
+  const { user } = useAuth(); 
+  const [sidebarOpen, setSidebarOpen] = useState(false); 
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false); 
 
-  // Select sidebar based on role
+ 
   const SidebarComponent =
     user?.role === "instructor"
       ? InstructorSidebar

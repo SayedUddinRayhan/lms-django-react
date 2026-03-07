@@ -12,7 +12,7 @@ class RolePermission(BasePermission):
         if not user or not user.is_authenticated:
             return False
 
-        # Safe methods allowed
+
         if request.method in SAFE_METHODS:
             return True
 

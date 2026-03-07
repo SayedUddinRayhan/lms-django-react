@@ -1,4 +1,3 @@
-// src/auth/AuthContext.jsx
 import { createContext, useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "./authService";
@@ -17,7 +16,6 @@ export const AuthProvider = ({ children }) => {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
 
-  // Initialize auth state on mount
   useEffect(() => {
     const initAuth = async () => {
       const token = localStorage.getItem("access");
@@ -25,7 +23,7 @@ export const AuthProvider = ({ children }) => {
         try {
           const currentUser = await authService.getCurrentUser();
           setUser(currentUser);
-          // ✅ Redirect based on role AFTER loading user
+         
           redirectToDashboard(currentUser?.role);
         } catch (err) {
           authService.logout();
@@ -37,9 +35,8 @@ export const AuthProvider = ({ children }) => {
     initAuth();
   }, []);
 
-  // ✅ Centralized role-based redirect
   const redirectToDashboard = (role) => {
-    if (!role) return; // Guest stays on public pages
+    if (!role) return; 
     
     if (role === "student") {
       if (window.location.pathname === "/login") {
@@ -50,7 +47,7 @@ export const AuthProvider = ({ children }) => {
         navigate("/dashboard/instructor/courses", { replace: true });
       }
     }
-    // Admin can be handled similarly if needed
+   
   };
 
   const login = async ({ identifier, password }) => {
@@ -60,7 +57,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const user = await authService.login({ identifier, password });
       setUser(user);
-      // ✅ Redirect immediately after login
+  
       redirectToDashboard(user?.role);
       return user;
     } catch (err) {

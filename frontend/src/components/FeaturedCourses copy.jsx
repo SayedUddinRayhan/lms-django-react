@@ -115,7 +115,7 @@ export default function ExploreCourses() {
                       </h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400">{course.instructor_name}</p>
 
-                      {/* Only show total modules & lessons */}
+                  
                       <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mt-1">
                         <div className="flex items-center gap-1">
                           <FaLayerGroup /> {course.total_modules ?? 0} Modules

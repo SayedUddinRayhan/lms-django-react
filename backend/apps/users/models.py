@@ -22,7 +22,6 @@ class User(AbstractUser):
     def __str__(self):
         return f"{self.username} ({self.role})"
 
-    # Convenience properties
     @property
     def is_admin_role(self):
         return self.role == self.ADMIN

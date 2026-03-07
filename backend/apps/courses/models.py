@@ -96,21 +96,18 @@ class Course(models.Model):
         super().save(*args, **kwargs)
 
     def clean(self):
-        # Only run validations that need a saved instance if self.pk exists
+       
         if self.status == "published":
-            # If the course is not yet saved, skip related object validation
+    
             if not self.pk:
                 return
 
-            # Must have a thumbnail
             if not self.thumbnail:
                 raise ValidationError("Thumbnail required to publish.")
 
-            # Must have at least one module
             if not self.modules.filter(is_active=True).exists():
                 raise ValidationError("At least one module required.")
 
-            # Must have at least one lesson in the course
             if not Lesson.objects.filter(module__course=self, is_active=True).exists():
                 raise ValidationError("At least one lesson required.")
 

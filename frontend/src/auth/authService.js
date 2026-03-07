@@ -1,11 +1,10 @@
-// src/auth/authService.js
 import API from "../api/apiClient";
 
 export const authService = {
   login: async ({ identifier, password }) => {
-    // ✅ Backend expects "username" field for email/phone auth
+  
     const res = await API.post("auth/login/", { 
-      username: identifier,  // ← Key fix: send as "username"
+      username: identifier,  
       password 
     });
     
