@@ -27,11 +27,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 DEBUG = env.bool("DEBUG", default=False)
 SECRET_KEY = env.str("SECRET_KEY")
 
-ALLOWED_HOSTS = ["127.0.0.1",
-    "localhost",
-    "lms-django-react-fy1a.onrender.com",
-    ".onrender.com",
-    ]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "lms-django-react-fy1a.onrender.com",]
 
 
 # Application definition
@@ -70,7 +66,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "lms-django-react.vercel.app",
+    "https://lms-django-react.vercel.app",
 ]
 
 # CORS_ALLOW_CREDENTIALS = True
