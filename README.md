@@ -65,7 +65,7 @@
 | **Instructor** | `instructor@gmail.com` | `test@123` | Create courses, manage modules & lessons |
 
 🔹 **Login with either email OR phone number** – both are supported!  
-🔹 **Live Demo**: [https://lms-django-react.vercel.app/login](https://lms-django-react.vercel.app/login)  
+
 
 ---
 
