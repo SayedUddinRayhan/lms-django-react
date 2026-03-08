@@ -6,6 +6,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Frontend](https://img.shields.io/badge/Frontend-Vercel-000000?logo=vercel&logoColor=white)](https://lms-django-react.vercel.app/)
 [![Backend](https://img.shields.io/badge/Backend-Render-46E47A?logo=render&logoColor=white)](https://lms-django-react-fy1a.onrender.com/)
+[![Storage](https://img.shields.io/badge/Storage-Cloudinary-38B2AC?logo=cloudinary&logoColor=white)](https://cloudinary.com/)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-black?logo=github&logoColor=white)](https://github.com/SayedUddinRayhan/lms-django-react)
 
 **LMS Platform** is a modern, full-stack Learning Management System built with **Django REST Framework** (backend), **React** (frontend), and **Tailwind CSS** (styling). It enables instructors to create courses, manage students, and track progress, while learners can enroll, access content, and interact with course materials—all through a responsive, intuitive interface.
@@ -18,8 +19,9 @@
 |---------|-----|--------|
 | **Frontend** | [https://lms-django-react.vercel.app](https://lms-django-react.vercel.app) | ✅ Live on Vercel |
 | **Backend API** | [https://lms-django-react-fy1a.onrender.com](https://lms-django-react-fy1a.onrender.com) | ✅ Live on Render |
+| **Media Storage** | [Cloudinary](https://cloudinary.com/) | ✅ Images & Videos hosted |
 
-> 💡 The frontend and backend are independently deployed. CORS is configured to allow communication between these domains.
+> 💡 The frontend and backend are independently deployed. CORS is configured to allow communication between these domains. All media files (course thumbnails, lesson videos, etc.) are served via **Cloudinary CDN** for fast, reliable delivery.
 
 ---
 
@@ -36,6 +38,7 @@
 ### 📚 Course Management
 - Create, edit, and organize courses with modules, lessons, and resources
 - Support for video and text content types
+- **Cloudinary Integration**: Upload and manage images/videos with automatic optimization and transformation
 
 ### 📊 Learning & Progress
 - Visual progress tracking with completion percentages
@@ -94,6 +97,7 @@
 - **Database**: PostgreSQL (production) / SQLite (development)
 - **Authentication**: JWT (`djangorestframework-simplejwt`) + Custom Phone/Email Backend
 - **Permissions**: Role-based using Django Groups and Permissions
+- **File Storage**: **Cloudinary** for images, videos, and media assets (with `django-cloudinary-storage`)
 - **Deployment**: Render (with PostgreSQL add-on, static files via WhiteNoise)
 
 ### Frontend
