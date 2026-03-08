@@ -15,6 +15,7 @@ import environ
 from datetime import timedelta
 import os
 import dj_database_url
+import cloudinary
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -50,6 +51,9 @@ INSTALLED_APPS = [
     'apps.courses',
 
     'corsheaders',
+
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -76,6 +80,15 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # CORS_ALLOW_CREDENTIALS = True
+
+
+
+
+cloudinary.config(
+    cloud_name = env("CLOUDINARY_CLOUD_NAME"),
+    api_key = env("CLOUDINARY_API_KEY"),
+    api_secret = env("CLOUDINARY_API_SECRET"),
+)
 
 ROOT_URLCONF = 'lms_main.urls'
 
@@ -194,3 +207,4 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
