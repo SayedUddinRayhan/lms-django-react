@@ -14,6 +14,7 @@ from pathlib import Path
 import environ
 from datetime import timedelta
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,6 +30,7 @@ SECRET_KEY = env.str("SECRET_KEY")
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "lms-django-react-fy1a.onrender.com",]
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
@@ -69,6 +71,10 @@ CORS_ALLOWED_ORIGINS = [
     "https://lms-django-react.vercel.app",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://lms-django-react.vercel.app",
+]
+
 # CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'lms_main.urls'
@@ -94,16 +100,25 @@ WSGI_APPLICATION = 'lms_main.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# For Render Deployment
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DATABASE_NAME'),
-        'USER': env('DATABASE_USER'),
-        'PASSWORD': env('DATABASE_PASSWORD'),
-        'HOST': env('DATABASE_HOST'),
-        'PORT': env('DATABASE_PORT'),
-    }
+    "default": dj_database_url.config(
+        default=os.environ.get("DATABASE_URL"),
+        conn_max_age=600
+    )
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': env('DATABASE_NAME'),
+#         'USER': env('DATABASE_USER'),
+#         'PASSWORD': env('DATABASE_PASSWORD'),
+#         'HOST': env('DATABASE_HOST'),
+#         'PORT': env('DATABASE_PORT'),
+#     }
+# }
 
 
 # Password validation
@@ -174,5 +189,8 @@ AUTHENTICATION_BACKENDS = [
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
