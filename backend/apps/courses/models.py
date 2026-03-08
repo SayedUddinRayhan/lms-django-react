@@ -87,33 +87,41 @@ class Course(models.Model):
             base_slug = slugify(self.title)
             slug = base_slug
             counter = 1
+
             while Course.objects.filter(slug=slug).exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
+
             self.slug = slug
 
-        self.full_clean()
         super().save(*args, **kwargs)
 
     def clean(self):
-       
-        if self.status == "published":
-    
-            if not self.pk:
-                return
 
-            if not self.thumbnail:
-                raise ValidationError("Thumbnail required to publish.")
+        if self.is_free and self.price > 0:
+            raise ValidationError("Free course cannot have a price.")
 
-            if not self.modules.filter(is_active=True).exists():
-                raise ValidationError("At least one module required.")
+        if self.status != "published":
+            return
 
-            if not Lesson.objects.filter(module__course=self, is_active=True).exists():
-                raise ValidationError("At least one lesson required.")
+        if not self.pk:
+            return
 
+        if not self.thumbnail:
+            raise ValidationError("Thumbnail required to publish.")
+
+        modules = self.modules.filter(is_active=True)
+
+        if not modules.exists():
+            raise ValidationError("At least one module required.")
+
+        if not Lesson.objects.filter(module__in=modules, is_active=True).exists():
+            raise ValidationError("At least one lesson required.")
 
     def __str__(self):
         return self.title
+
+
 
 
 

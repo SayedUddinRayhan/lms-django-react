@@ -32,7 +32,7 @@ class PublicCourseList(generics.ListAPIView):
     def get_queryset(self):
         category_id = self.request.query_params.get("category__id")
 
-        qs = Course.objects.filter(is_active=True) \
+        qs = Course.objects.filter(is_active=True, status="published") \
             .select_related("category", "instructor") \
             .annotate(
                 total_modules=Count("modules", distinct=True),
@@ -51,7 +51,7 @@ class PublicCourseDetailView(generics.RetrieveAPIView):
 
     def get_queryset(self):
        
-        return Course.objects.filter(is_active=True) \
+        return Course.objects.filter(is_active=True, status="published") \
             .select_related("instructor", "category") \
             .prefetch_related(
                 Prefetch(
@@ -93,23 +93,29 @@ class CourseViewSet(viewsets.ModelViewSet):
     ordering_fields = ["created_at", "price"]
     ordering = ["-created_at"]
 
-
     def get_queryset(self):
         user = self.request.user
 
         qs = Course.objects.filter(is_active=True) \
-        .select_related("category", "instructor") \
-        .prefetch_related(
-            "modules",
-            Prefetch("modules__lessons", queryset=Lesson.objects.filter(is_active=True)),
-            "enrollments"
-        ).annotate(
-            total_modules=Count("modules", distinct=True),
-            total_lessons=Count("modules__lessons", distinct=True)
-        )
+            .select_related("category", "instructor") \
+            .prefetch_related(
+                Prefetch(
+                    "modules",
+                    queryset=Module.objects.filter(is_active=True).prefetch_related(
+                        Prefetch(
+                            "lessons",
+                            queryset=Lesson.objects.filter(is_active=True)
+                        )
+                    )
+                ),
+                "enrollments"
+            ).annotate(
+                total_modules=Count("modules", distinct=True),
+                total_lessons=Count("modules__lessons", distinct=True)
+            )
 
         if not user.is_authenticated:
-            return qs
+            return qs.none()
 
         if user.is_admin_role:
             return qs
@@ -118,15 +124,15 @@ class CourseViewSet(viewsets.ModelViewSet):
             return qs.filter(instructor=user)
 
         if user.is_student_role:
-            return qs
+            return qs.filter(status="published")
 
-        return qs
-    
+        return qs.none()
+
     def perform_create(self, serializer):
         serializer.save(
             instructor=self.request.user,
             is_active=True
-            )
+        )
 
 
 # Module
@@ -215,14 +221,27 @@ class LessonProgressViewSet(viewsets.ModelViewSet):
         qs = LessonProgress.objects.select_related(
             "student", "lesson", "lesson__module", "lesson__module__course"
         )
+
         if user.is_admin_role:
             return qs
+
         if user.is_student_role:
             return qs.filter(student=user)
+
         return qs.none()
 
     def perform_create(self, serializer):
-        serializer.save(student=self.request.user)
+        student = self.request.user
+        lesson = serializer.validated_data["lesson"]
+
+        progress, created = LessonProgress.objects.update_or_create(
+            student=student,
+            lesson=lesson,
+            defaults=serializer.validated_data
+        )
+
+        if not created:
+            raise ValidationError("Progress already exists for this lesson.")
 
 
 
@@ -287,7 +306,7 @@ class StudentDashboardView(APIView):
         )["watched_seconds"] or 0
 
         courses = Course.objects.filter(
-            enrollments__student=user
+            enrollments__student=user, status="published"
         ).annotate(
             total_modules=Count("modules", distinct=True),
             total_lessons=Count("modules__lessons", distinct=True),
@@ -339,7 +358,7 @@ class StudentCourseDetailView(APIView):
 
       
         course = get_object_or_404(
-            Course.objects.filter(id=course_id, is_active=True).prefetch_related(
+            Course.objects.filter(id=course_id, is_active=True, status="published").prefetch_related(
                 Prefetch("modules", queryset=modules_qs)
             )
         )
