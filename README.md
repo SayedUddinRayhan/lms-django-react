@@ -4,10 +4,22 @@
 [![Django](https://img.shields.io/badge/Django-green?logo=django&logoColor=white)](https://www.djangoproject.com/)
 [![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?logo=vercel)](https://lms-django-react.vercel.app/)
+[![Frontend](https://img.shields.io/badge/Frontend-Vercel-000000?logo=vercel&logoColor=white)](https://lms-django-react.vercel.app/)
+[![Backend](https://img.shields.io/badge/Backend-Render-46E47A?logo=render&logoColor=white)](https://lms-django-react-fy1a.onrender.com/)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-black?logo=github&logoColor=white)](https://github.com/SayedUddinRayhan/lms-django-react)
 
 **LMS Platform** is a modern, full-stack Learning Management System built with **Django REST Framework** (backend), **React** (frontend), and **Tailwind CSS** (styling). It enables instructors to create courses, manage students, and track progress, while learners can enroll, access content, and interact with course materials—all through a responsive, intuitive interface.
+
+---
+
+## 🌐 Live Deployment
+
+| Service | URL | Status |
+|---------|-----|--------|
+| **Frontend** | [https://lms-django-react.vercel.app](https://lms-django-react.vercel.app) | ✅ Live on Vercel |
+| **Backend API** | [https://lms-django-react-fy1a.onrender.com](https://lms-django-react-fy1a.onrender.com) | ✅ Live on Render |
+
+> 💡 The frontend and backend are independently deployed. CORS is configured to allow communication between these domains.
 
 ---
 
@@ -36,7 +48,6 @@
 - Dark/Light mode toggle
 - Intuitive dashboard tailored to each user role
 
-
 ### ⚙️ Developer Features
 - RESTful API with Django REST Framework
 - CORS configured for seamless frontend-backend communication
@@ -46,16 +57,15 @@
 
 ## 🎮 Quick Start – Demo Accounts
 
-> ⚠️ **For testing only** 
+> ⚠️ **For testing only** – Credentials work on both local and live deployments
 
 | Role | Email / Phone | Password | Access |
 |------|--------------|----------|--------|
 | **Student** | `student@gmail.com` | `test@123` | Enroll, view courses, track progress |
 | **Instructor** | `instructor@gmail.com` | `test@123` | Create courses, manage modules & lessons |
 
-
 🔹 **Login with either email OR phone number** – both are supported!  
-🔹 Visit: [http://localhost:5173/login](http://localhost:5173/login)
+🔹 **Live Demo**: [https://lms-django-react.vercel.app/login](https://lms-django-react.vercel.app/login)  
 
 ---
 
@@ -64,7 +74,6 @@
 | Dashboard | Course List | Course Detail | Student Progress |
 |-----------|-------------|---------------|------------------|
 | ![Dashboard](screenshots/dashboard.png) | ![Courses](screenshots/courses.png) | ![Course Detail](screenshots/course-detail.png) | ![Progress](screenshots/progress.png) |
-
 
 ---
 
@@ -85,15 +94,17 @@
 - **Database**: PostgreSQL (production) / SQLite (development)
 - **Authentication**: JWT (`djangorestframework-simplejwt`) + Custom Phone/Email Backend
 - **Permissions**: Role-based using Django Groups and Permissions
+- **Deployment**: Render (with PostgreSQL add-on, static files via WhiteNoise)
 
 ### Frontend
 - **React 18+** with Vite
 - **Tailwind CSS** for utility-first, responsive styling
 - **React Router v6** for client-side routing
-- **Axios** for API HTTP requests
+- **Axios** for API HTTP requests (with base URL configured per environment)
 - **React Hook Form** + **Zod** for form handling & validation
 - **Recharts** for dashboard analytics visualization
 - **React Hot Toast** for elegant, non-intrusive user notifications
+- **Deployment**: Vercel (with environment variables for API endpoint)
 
 ---
 
@@ -105,5 +116,5 @@
 
 ### Step 1: Clone the Repository
 ```bash
-git clone https://github.com/SayedUddinRayhan/lms-django-react.git
+git clone https://github.com/SayedUddinRayhan/lms-django-react.git  
 cd lms-django-react
