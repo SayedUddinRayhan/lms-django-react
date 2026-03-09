@@ -76,7 +76,7 @@
 
 | Home | Course Details | Course Detail | Student Progress |
 |-----------|-------------|---------------|------------------|
-| ![Dashboard](screenshots/Home.png) | ![Courses](screenshots/Course_Details.png) | ![Course Detail](screenshots/course-detail.png) | ![Progress](screenshots/progress.png) |
+| ![Dashboard](screenshot/Home.png) | ![Courses](screenshots/Course_Details.png) | ![Course Detail](screenshots/course-detail.png) | ![Progress](screenshots/progress.png) |
 
 ---
 
