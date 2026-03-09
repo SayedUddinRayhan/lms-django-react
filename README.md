@@ -60,8 +60,6 @@
 
 ## 🎮 Quick Start – Demo Accounts
 
-> ⚠️ **For testing only** – Credentials work on both local and live deployments
-
 | Role | Email / Phone | Password | Access |
 |------|--------------|----------|--------|
 | **Student** | `student@gmail.com` | `test@123` | Enroll, view courses, track progress |
@@ -74,9 +72,9 @@
 
 ## 📸 Screenshots
 
-| Home | Course Details | Course Detail | Student Progress |
-|-----------|-------------|---------------|------------------|
-| ![Dashboard](screenshot/Home.png) | ![Courses](screenshots/Course_Details.png) | ![Course Detail](screenshots/course-detail.png) | ![Progress](screenshots/progress.png) |
+| Home | Course Details | Student Dashboard | Student Dashboar Details | Instructor Dashboar |
+|-----------|-------------|---------------|------------------|------------------|
+| ![Home](screenshots/Home.png) | ![CourseDetails](screenshots/CourseDetails.png) | ![StudentDashboard](screenshots/Student_dashboard.png) | ![StudentDashboardDetails](screenshots/Student_dashboard_details.png) | ![InstructorDashboard](screenshots/Instructor_dashboard.png) |
 
 ---
 
