@@ -74,9 +74,9 @@
 
 ## 📸 Screenshots
 
-| Dashboard | Course List | Course Detail | Student Progress |
+| Home | Course Details | Course Detail | Student Progress |
 |-----------|-------------|---------------|------------------|
-| ![Dashboard](screenshots/dashboard.png) | ![Courses](screenshots/courses.png) | ![Course Detail](screenshots/course-detail.png) | ![Progress](screenshots/progress.png) |
+| ![Dashboard](screenshots/Home.png) | ![Courses](screenshots/Course_Details.png) | ![Course Detail](screenshots/course-detail.png) | ![Progress](screenshots/progress.png) |
 
 ---
 
