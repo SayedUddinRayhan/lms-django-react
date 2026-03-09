@@ -7,6 +7,7 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import Home from "./pages/public/Home";
 import ExploreCategories from "./components/ExploreCategories";
 import FeaturedCourses from "./components/FeaturedCourses";
+import AllCourses from "./components/AllCourses";
 import CourseDetails from "./pages/public/CourseDetails";
 
 // Auth Pages
@@ -37,6 +38,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/categories" element={<ExploreCategories />} />
         <Route path="/courses" element={<FeaturedCourses />} />
+        <Route path="/all-courses" element={<AllCourses />} />
         <Route path="/courses/:slug" element={<CourseDetails />} />
       </Route>
 

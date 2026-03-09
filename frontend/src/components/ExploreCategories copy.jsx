@@ -56,6 +56,7 @@ export default function ExploreCategories() {
     fetchCourses();
   }, [activeCategory]);
 
+
   const handleCategoryClick = (id, index) => {
     setActiveCategory(id);
     const container = scrollContainerRef.current;
@@ -67,20 +68,20 @@ export default function ExploreCategories() {
   };
 
   const scrollLeft = () => {
-    const container = scrollContainerRef.current;
-    container?.scrollBy({ left: -300, behavior: "smooth" });
+    scrollContainerRef.current?.scrollBy({ left: -200, behavior: "smooth" });
   };
 
   const scrollRight = () => {
-    const container = scrollContainerRef.current;
-    container?.scrollBy({ left: 300, behavior: "smooth" });
+    scrollContainerRef.current?.scrollBy({ left: 200, behavior: "smooth" });
   };
 
+ 
   const handleEnroll = async (e, course) => {
     e.preventDefault();
     e.stopPropagation();
 
     const token = localStorage.getItem("access");
+
     if (!token) {
       localStorage.setItem("pendingEnrollCourse", course.id);
       toast.info("Please login to enroll");
@@ -90,10 +91,13 @@ export default function ExploreCategories() {
 
     try {
       setEnrollingId(course.id);
-      const res = await API.get("courses/enrollments/", { params: { course: course.id } });
+
+      const res = await API.get("courses/enrollments/", {
+        params: { course: course.id }
+      });
       const results = res.data?.results || res.data || [];
       const isAlreadyEnrolled = Array.isArray(results)
-        ? results.some((enr) => enr.course == course.id)
+        ? results.some(enr => enr.course == course.id)
         : false;
 
       if (isAlreadyEnrolled) {
@@ -101,9 +105,11 @@ export default function ExploreCategories() {
         return;
       }
 
+   
       await API.post("courses/enrollments/", { course: course.id });
       toast.success("Successfully enrolled!");
       navigate("/dashboard/student");
+
     } catch (err) {
       console.error("Enrollment error:", err);
       toast.error(err.response?.data?.detail || "Enrollment failed.");
@@ -113,38 +119,36 @@ export default function ExploreCategories() {
   };
 
   return (
-    <section className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors">
+    <section className="py-20 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4 sm:gap-0">
+        <div className="flex items-center justify-between mb-10">
           <h2 className="text-4xl font-bold text-gray-900 dark:text-white">
             Explore Courses
           </h2>
-          <Link to="/all-courses" className="flex items-center gap-2 text-indigo-600 font-semibold hover:underline">
-            View All <HiChevronRight className="w-5 h-5" />
-          </Link>
+          <button className="flex items-center gap-2 text-indigo-600 font-semibold hover:underline">
+            View All <HiChevronRight />
+          </button>
         </div>
 
-        {/* Category Tabs with arrows */}
-        <div className="relative mb-10 flex items-center">
-          {/* Left Arrow */}
+        {/* Category Tabs */}
+        <div className="relative mb-10">
           <button
             onClick={scrollLeft}
-            className="p-2 rounded-full bg-white dark:bg-gray-800 shadow hover:bg-gray-100 dark:hover:bg-gray-700 transition z-10"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-white dark:bg-gray-800 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-700 transition"
           >
             <HiChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-200" />
           </button>
 
-          {/* Categories */}
           <div
             ref={scrollContainerRef}
-            className="flex gap-4 overflow-hidden flex-1 mx-4"
+            className="flex gap-4 overflow-x-auto scrollbar-hide px-12"
           >
             {loadingCategories
               ? Array.from({ length: 5 }).map((_, i) => (
                   <div
                     key={i}
-                    className="w-32 h-12 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"
+                    className="w-32 h-10 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"
                   />
                 ))
               : categories.map((cat, index) => (
@@ -152,25 +156,20 @@ export default function ExploreCategories() {
                     key={cat.id}
                     ref={(el) => (tabRefs.current[index] = el)}
                     onClick={() => handleCategoryClick(cat.id, index)}
-                    className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all shadow-sm hover:shadow-md transform hover:scale-105 whitespace-nowrap ${
+                    className={`px-6 py-2 rounded-full text-sm font-semibold transition whitespace-nowrap ${
                       activeCategory === cat.id
-                        ? "bg-gradient-to-r from-indigo-500 to-blue-500 text-white"
-                        : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-indigo-50 dark:hover:bg-gray-700"
+                        ? "bg-indigo-600 text-white shadow-md"
+                        : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-indigo-50"
                     }`}
                   >
-                    <FaLayerGroup className="w-4 h-4 text-indigo-500" />
-                    <span>{cat.name}</span>
-                    <span className="bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-0.5 rounded-full text-xs font-medium">
-                      {cat.total_courses || 0}
-                    </span>
+                    {cat.name} ({cat.total_courses || 0})
                   </button>
                 ))}
           </div>
 
-          {/* Right Arrow */}
           <button
             onClick={scrollRight}
-            className="p-2 rounded-full bg-white dark:bg-gray-800 shadow hover:bg-gray-100 dark:hover:bg-gray-700 transition z-10"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-white dark:bg-gray-800 rounded-full shadow hover:bg-gray-100 dark:hover:bg-gray-700 transition"
           >
             <HiChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-200" />
           </button>

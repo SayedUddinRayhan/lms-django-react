@@ -16,7 +16,6 @@ export default function FeaturedCourses() {
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
-  
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -34,15 +33,10 @@ export default function FeaturedCourses() {
     fetchCourses();
   }, []);
 
- 
   const scroll = (direction) => {
-    if (carouselRef.current) {
-      const scrollAmount = 320;
-      carouselRef.current.scrollBy({ 
-        left: direction === "left" ? -scrollAmount : scrollAmount, 
-        behavior: "smooth" 
-      });
-    }
+    if (!carouselRef.current) return;
+    const scrollAmount = carouselRef.current.clientWidth * 0.7; // scroll 70% of container
+    carouselRef.current.scrollBy({ left: direction === "left" ? -scrollAmount : scrollAmount, behavior: "smooth" });
   };
 
   const handleTouchStart = (e) => (touchStartX.current = e.touches[0].clientX);
@@ -52,20 +46,11 @@ export default function FeaturedCourses() {
     if (touchStartX.current - touchEndX.current < -50) scroll("left");
   };
 
-
-  useEffect(() => {
-    const interval = setInterval(() => scroll("right"), 4000);
-    return () => clearInterval(interval);
-  }, []);
-
-
   const handleEnroll = async (e, course) => {
     e.preventDefault();
     e.stopPropagation();
 
     const token = localStorage.getItem("access");
-
-
     if (!token) {
       localStorage.setItem("pendingEnrollCourse", course.id);
       toast.info("Please login to enroll");
@@ -75,13 +60,10 @@ export default function FeaturedCourses() {
 
     try {
       setEnrollingId(course.id);
-
-      const res = await API.get("courses/enrollments/", {
-        params: { course: course.id }
-      });
+      const res = await API.get("courses/enrollments/", { params: { course: course.id } });
       const results = res.data?.results || res.data || [];
       const isAlreadyEnrolled = Array.isArray(results)
-        ? results.some(enr => enr.course == course.id)
+        ? results.some((enr) => enr.course == course.id)
         : false;
 
       if (isAlreadyEnrolled) {
@@ -89,11 +71,9 @@ export default function FeaturedCourses() {
         return;
       }
 
-      // Create enrollment
       await API.post("courses/enrollments/", { course: course.id });
       toast.success("Successfully enrolled!");
       navigate("/dashboard/student");
-
     } catch (err) {
       console.error("Enrollment error:", err);
       toast.error(err.response?.data?.detail || "Enrollment failed.");
@@ -103,13 +83,13 @@ export default function FeaturedCourses() {
   };
 
   return (
-    <section className="py-24 bg-gray-50 dark:bg-gray-900 transition">
+    <section className="py-24 bg-gray-50 dark:bg-gray-900 transition-colors">
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4 sm:gap-0">
           <h2 className="text-4xl font-bold text-gray-900 dark:text-white">Featured Courses</h2>
           <Link
-            to="/courses"
+            to="/all-courses"
             className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full font-semibold transition"
           >
             Browse All Courses
@@ -118,12 +98,15 @@ export default function FeaturedCourses() {
 
         {/* Carousel */}
         <div className="relative">
+          {/* Left arrow */}
           <button
             onClick={() => scroll("left")}
             className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 shadow-md p-2 rounded-full z-10 hover:bg-indigo-50 dark:hover:bg-gray-700 transition"
           >
             <FaChevronLeft className="text-gray-700 dark:text-gray-300" />
           </button>
+
+          {/* Right arrow */}
           <button
             onClick={() => scroll("right")}
             className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 shadow-md p-2 rounded-full z-10 hover:bg-indigo-50 dark:hover:bg-gray-700 transition"
@@ -131,25 +114,26 @@ export default function FeaturedCourses() {
             <FaChevronRight className="text-gray-700 dark:text-gray-300" />
           </button>
 
+          {/* Carousel container */}
           <div
             ref={carouselRef}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth py-4 snap-x snap-mandatory"
+            className="flex gap-6 overflow-hidden py-4"
           >
             {loading
               ? Array.from({ length: 5 }).map((_, i) => (
                   <div
                     key={i}
-                    className="w-72 h-80 bg-gray-200 dark:bg-gray-700 rounded-2xl animate-pulse flex-shrink-0"
+                    className="flex-shrink-0 w-72 h-80 bg-gray-200 dark:bg-gray-700 rounded-2xl animate-pulse"
                   />
                 ))
               : courses.map((course) => (
                   <Link
                     to={`/courses/${course.slug}`}
                     key={course.id}
-                    className="flex-shrink-0 w-72 snap-start group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow hover:shadow-xl transition border border-gray-100 dark:border-gray-700"
+                    className="flex-shrink-0 w-72 group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow hover:shadow-xl transition border border-gray-100 dark:border-gray-700"
                   >
                     <div className="relative">
                       <img
@@ -183,13 +167,8 @@ export default function FeaturedCourses() {
                         <span className="text-indigo-600 font-bold text-lg">
                           {course.is_free ? "Free" : `৳ ${Number(course.price).toLocaleString()}`}
                         </span>
-                        
                         <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleEnroll(e, course);
-                          }}
+                          onClick={(e) => handleEnroll(e, course)}
                           disabled={enrollingId === course.id}
                           className={`text-sm px-4 py-2 rounded-lg transition ${
                             enrollingId === course.id

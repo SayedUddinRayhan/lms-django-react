@@ -85,7 +85,7 @@ function DashboardNavbar({ onMobileMenuToggle }) {
         >
           {/* Avatar */}
           <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
-            {user?.first_name?.charAt(0)?.toUpperCase() || "U"}
+            {user?.username?.charAt(0)?.toUpperCase() || "U"}
           </div>
 
           <HiChevronDown
@@ -101,9 +101,14 @@ function DashboardNavbar({ onMobileMenuToggle }) {
             {/* User Info */}
             <div className="px-4 py-3 border-b">
               <p className="text-sm font-semibold">
-                {user?.first_name} {user?.last_name}
+                {user?.first_name || user?.last_name
+                  ? `${user?.first_name || ""} ${user?.last_name || ""}`
+                  : user?.username}
               </p>
-              <p className="text-xs text-gray-500">{user?.phone}</p>
+
+              <p className="text-xs text-gray-500">
+                {user?.phone ? user.phone : user?.email}
+              </p>
             </div>
 
             {/* Profile Button */}
